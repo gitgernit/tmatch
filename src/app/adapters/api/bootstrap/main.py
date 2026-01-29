@@ -17,7 +17,15 @@ async def main() -> None:
     )
     server = uvicorn.Server(config)
 
-    await server.serve()
+    try:
+        await asyncio.gather(
+            server.serve(),
+        )
+
+    except asyncio.CancelledError:
+        await asyncio.gather(
+            server.shutdown(),
+        )
 
 
 if __name__ == "__main__":

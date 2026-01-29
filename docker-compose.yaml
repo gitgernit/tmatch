@@ -1,0 +1,9 @@
+services:
+  api:
+    build:
+      context: .
+      target: api
+    ports:
+      - "8080:8080"
+    restart: always
+    command: python src/app/adapters/api/bootstrap/main.py
