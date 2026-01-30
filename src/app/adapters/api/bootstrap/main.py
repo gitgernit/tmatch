@@ -1,7 +1,7 @@
-from litestar import Litestar
-import uvicorn
-
 import asyncio
+
+import uvicorn
+from litestar import Litestar
 
 from app.adapters.api.routes.healthcheck.router import router as healthcheck_router
 

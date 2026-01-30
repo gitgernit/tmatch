@@ -1,7 +1,7 @@
-from litestar import get, Router
-from litestar.status_codes import HTTP_200_OK
-
 from typing import Literal
+
+from litestar import Router, get
+from litestar.status_codes import HTTP_200_OK
 
 
 @get(
