@@ -36,4 +36,4 @@ WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /app/src ./src
 
-CMD ["python", "src/app/adapters/api/bootstrap/main.py"]
+CMD ["python", "src/app/presentation/api/bootstrap/main.py"]

@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+---
+
+Given project is a backend template, that will later be used for a hackathon.
+You use:
+* litestar as a server
+* dishka as a di framework \ ioc container
+* adaptix as a data conversion library
+
+You stick to clean architecture principles, SOLID and basic DDD rules. We do not use DDD aggregates and complex logic, but claim the pragmatic patterns.
+4 main layers are distincted:
+* app/infra - Infrastructure layer
+* app/presentation - Presentation layer
+* app/application - Application layer
+* app/domain - Domain (entities) layer
+
+You use modern python 3.12 syntax.
+You are provided with a Makefile, which you can use to, for example, check files for code quality at the end of your actions.

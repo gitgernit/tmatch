@@ -1,35 +1,49 @@
 [project]
 name = "app"
 version = "0.1.0"
-description = "Abstract litestar application"
+description = ""
+readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "adaptix==3.0.0b11",
+    "dishka>=1.7.2",
+    "python-dotenv>=1.2.1",
+]
 
 [dependency-groups]
 backend = [
-    "litestar[standard]>=2.19.0",
+    "uvicorn>=0.40.0",
 ]
-qa = [
+linters = [
     "mypy>=1.19.1",
     "ruff>=0.14.14",
 ]
+tests = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-deadfixtures>=3.1.0",
+]
+dev = [
+    { include-group = "linters" },
+    { include-group = "backend" },
+    { include-group = "tests" },
+    "litestar>=2.20.0",
+]
 
 [project.scripts]
-app = "app:main"
+api = "app.presentation.api.bootstrap.main:sync_entrypoint"
 
 [build-system]
-requires = ["uv_build>=0.9.3,<0.10.0"]
+requires = ["uv_build>=0.9.18,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.mypy]
 strict = true
 strict_bytes = true
+ignore_missing_imports = true
 local_partial_types = true
 warn_unreachable = true
 files = ["src/app"]
-exclude = [
-    "src/app/migrations",
-]
 enable_error_code = [
     "truthy-bool",
     "truthy-iterable",
@@ -43,97 +57,109 @@ enable_error_code = [
     "unimported-reveal",
     "deprecated",
 ]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["aioboto3.*", "aiobotocore.*"]
-follow_untyped_imports = true
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.coverage.run]
+omit = ["tests/*", "**/__main__.py", "**/.venv/*", "**/site-packages/*"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+# fail_under = 100
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --showlocals --verbosity 2"
+log_level = "DEBUG"
 
 [tool.ruff]
-fix = true
-preview = true
-target-version = "py313"
 line-length = 120
-indent-width = 4
-exclude = [
-    "src/app/migrations/**.py",
-]
 
 [tool.ruff.lint]
 select = [
-    "A", # flake8-builtins
-    "B", # flake8-bugbear
-    "C4", # flake8-comprehensions
-    "C90", # maccabe
-    "COM", # flake8-commas
-    "D", # pydocstyle
-    "DTZ", # flake8-datetimez
-    "E", # pycodestyle
-    "ERA", # flake8-eradicate
-    "EXE", # flake8-executable
-    "F", # pyflakes
-    "FA", # flake8-future-annotations
-    "FBT", # flake8-boolean-trap
-    "FLY", # pyflint
-    "FURB", # refurb
-    "G", # flake8-logging-format
-    "I", # isort
-    "ICN", # flake8-import-conventions
-    "ISC", # flake8-implicit-str-concat
-    "LOG", # flake8-logging
-    "N", # pep8-naming
-    "PERF", # perflint
-    "PIE", # flake8-pie
-    "PL", # pylint
-    "PT", # flake8-pytest-style
-    "PTH", # flake8-use-pathlib
-    "Q", # flake8-quotes
-    "RET", # flake8-return
-    "RSE", # flake8-raise
-    "RUF", # ruff
-    "S", # flake8-bandit
-    "SIM", # flake8-simpify
-    "SLF", # flake8-self
-    "SLOT", # flake8-slots
-    "T100", # flake8-debugger
-    "TRY", # tryceratops
-    "UP", # pyupgrade
-    "W", # pycodestyle
-    "YTT", # flake8-2020
+    "A",      # flake8-builtins
+    "ANN",    # flake8-annotations
+    "ARG",    # flake8-unused-arguments
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except
+    "C4",     # flake8-comprehensions
+    "C90",    # mccabe
+    "COM",    # flake8-commas
+    "D",      # pydocstyle
+    "DTZ",    # flake8-datetimez
+    "E",      # pycodestyle errors
+    "EM",     # flake8-errmsg
+    "ERA",    # flake8-eradicate
+    "EXE",    # flake8-executable
+    "F",      # pyflakes
+    "FA",     # flake8-future-annotations
+    "FBT",    # flake8-boolean-trap
+    "FLY",    # flynt
+    "FURB",   # refurb
+    "G",      # flake8-logging-format
+    "I",      # isort
+    "ICN",    # flake8-import-conventions
+    "INP",    # flake8-no-pep420
+    "ISC",    # flake8-implicit-str-concat
+    "LOG",    # flake8-logging
+    "N",      # pep8-naming
+    "PD",     # pandas-vet
+    "PERF",   # perflint
+    "PIE",    # flake8-pie
+    "PL",     # pylint
+    "PT",     # flake8-pytest-style
+    "PTH",    # flake8-use-pathlib
+    "Q",      # flake8-quotes
+    "RET",    # flake8-return
+    "RSE",    # flake8-raise
+    "RUF",    # ruff-specific rules
+    "S",      # flake8-bandit
+    "SIM",    # flake8-simplify
+    "SLF",    # flake8-self
+    "SLOT",   # flake8-slots
+    "T10",    # flake8-debugger
+    "T20",    # flake8-print
+    "TCH",    # flake8-type-checking
+    "TID",    # flake8-tidy-imports
+    "TRY",    # tryceratops
+    "UP",     # pyupgrade
+    "W",      # pycodestyle warnings
+    "YTT",    # flake8-2020
 ]
 ignore = [
-    "PLR1702",
-    "A005", # allow to shadow stdlib and builtin module names
-    "COM812", # trailing comma, conflicts with `ruff format`
-    # Different doc rules that we don't really care about:
-    "D",
-    "ISC001", # implicit string concat conflicts with `ruff format`
-    "ISC003", # prefer explicit string concat over implicit concat
-    "PLR09", # we have our own complexity rules
-    "PLR2004", # do not report magic numbers
-    "PLR6301", # do not require classmethod / staticmethod when self not used
-    "TRY003", # long exception messages from `tryceratops`
-    "N813",
-    "S106",
-    "ERA",
-    "PT022",
-    "RUF"
+    "COM812",   # trailing comma conflicts with ruff format
+    "ISC001",   # implicit string concat conflicts with ruff format
+
+    "D100",     # missing docstring in public module
+    "D101",     # missing docstring in public class
+    "D102",     # missing docstring in public method
+    "D103",     # missing docstring in public function
+    "D104",     # missing docstring in public package
+    "D105",     # missing docstring in magic method
+    "D106",     # missing docstring in public nested class
+    "D107",     # missing docstring in __init__
+    "D203",     # blank line before class docstring
+    "D213",     # multi-line docstring summary on second line
+
+    "A005",     # shadowing builtin module names
+    "ERA",      # commented-out code
+    "ISC003",   # explicit string concat
+    "PLR09",    # complexity rules
+    "PLR2004",  # magic value comparisons
+    "PLR6301",  # method could be static
+    "RUF001",   # ambiguous unicode characters
+    "RUF002",   # ambiguous unicode in docstring
+    "RUF003",   # ambiguous unicode in comment
+    "S106",     # hardcoded password
 ]
-external = ["WPS"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*.py" = [
-    "S101", # asserts
-]
-
-[tool.ruff.lint.isort]
-case-sensitive = true
-combine-as-imports = true
+"tests/*" = ["S101"]
 
 [tool.ruff.format]
 quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "lf"
-
-# This is only required because we have invalid on-purpose code in docstrings:
-docstring-code-format = false
