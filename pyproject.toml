@@ -7,12 +7,15 @@ requires-python = ">=3.12"
 dependencies = [
     "adaptix==3.0.0b11",
     "dishka>=1.7.2",
+    "psycopg[binary]>=3.3.2",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
+    "sqlalchemy>=2.0.46",
 ]
 
 [dependency-groups]
 backend = [
+    "litestar>=2.20.0",
     "uvicorn>=0.40.0",
 ]
 linters = [
@@ -28,7 +31,6 @@ dev = [
     { include-group = "linters" },
     { include-group = "backend" },
     { include-group = "tests" },
-    "litestar>=2.20.0",
 ]
 
 [project.scripts]

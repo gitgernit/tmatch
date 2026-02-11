@@ -1,10 +1,11 @@
 from dishka import BaseScope, Provider, Scope, provide, provide_all
 
 from app.infra.config.loaders import (
+    EnvPostgresConfigLoader,
     EnvServerConfigLoader,
 )
 from app.infra.config.sources import EnvSource
-from app.presentation.api.config.models import ServerConfig
+from app.presentation.api.config.models import PostgresConfig, ServerConfig
 
 
 class SourcesProvider(Provider):
@@ -20,10 +21,15 @@ class ConfigProvider(Provider):
 
     loaders = provide_all(
         EnvServerConfigLoader,
+        EnvPostgresConfigLoader,
     )
 
     @provide
     def env_server_config(self, loader: EnvServerConfigLoader) -> ServerConfig:
+        return loader.load()
+
+    @provide
+    def env_postgres_config(self, loader: EnvPostgresConfigLoader) -> PostgresConfig:
         return loader.load()
 
 

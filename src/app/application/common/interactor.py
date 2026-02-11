@@ -7,7 +7,7 @@ from typing import dataclass_transform
     eq_default=False,
     kw_only_default=True,
 )
-def interactor[InteractorClsT](interactor_cls: type[InteractorClsT]) -> type[InteractorClsT]:
+def interactor[InteractorClsT](cls: type[InteractorClsT]) -> type[InteractorClsT]:
     return dataclass(
         kw_only=True,
         eq=False,
@@ -15,4 +15,4 @@ def interactor[InteractorClsT](interactor_cls: type[InteractorClsT]) -> type[Int
         frozen=True,
         match_args=False,
         slots=True,
-    )(interactor_cls)
+    )(cls)

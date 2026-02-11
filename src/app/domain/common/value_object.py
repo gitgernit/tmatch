@@ -7,7 +7,7 @@ from typing import dataclass_transform
     eq_default=True,
     kw_only_default=True,
 )
-def value_object[T](cls: type[T]) -> type[T]:
+def value_object[ValueObjectClsT](cls: type[ValueObjectClsT]) -> type[ValueObjectClsT]:
     return dataclass(
         frozen=True,
         eq=True,

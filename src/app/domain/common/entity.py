@@ -6,8 +6,8 @@ from uuid import UUID
 
 
 @dataclass_transform(kw_only_default=True)
-def entity[EntityClsT](entity_cls: type[EntityClsT]) -> type[EntityClsT]:
-    return dataclass(kw_only=True)(entity_cls)
+def entity[EntityClsT](cls: type[EntityClsT]) -> type[EntityClsT]:
+    return dataclass(kw_only=True)(cls)
 
 
 @entity
