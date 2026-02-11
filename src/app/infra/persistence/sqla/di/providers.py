@@ -1,10 +1,14 @@
 from collections.abc import AsyncIterable
 from urllib.parse import quote_plus
 
-from dishka import BaseScope, Provider, Scope, WithParents, provide
+from dishka import BaseScope, Provider, Scope, WithParents, provide, provide_all
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 
+from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
+from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
+from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
+from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
 from app.presentation.api.config.models import PostgresConfig
 
 
@@ -29,9 +33,24 @@ class SqlaProvider(Provider):
         async with session:
             yield session
 
+    persistence_bootstrapper = provide(
+        source=SqlaPersistenceBootstrapper,
+        provides=PersistenceBootstrapper,
+        scope=Scope.APP,
+    )
+
+
+class DataGatewayProvider(Provider):
+    scope: BaseScope | None = Scope.REQUEST
+
     unit_of_work = provide(WithParents[DefaultUnitOfWork], scope=Scope.REQUEST)
+    data_gateways = provide_all(
+        WithParents[DefaultUserDataGateway],
+        WithParents[DefaultAccessTokenDataGateway],
+    )
 
 
 providers = [
     SqlaProvider(),
+    DataGatewayProvider(),
 ]

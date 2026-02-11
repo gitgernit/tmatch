@@ -15,3 +15,9 @@ class PostgresConfig:
     user: str
     password: str
     db: str
+
+
+@dataclass(frozen=True)
+class AccessTokenConfig:
+    crypto_key: str
+    expires_in_seconds: int
