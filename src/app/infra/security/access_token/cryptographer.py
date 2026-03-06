@@ -1,4 +1,4 @@
-from typing import cast, override
+from typing import override
 from uuid import UUID
 
 from cryptography.fernet import Fernet, InvalidToken
@@ -13,12 +13,9 @@ class FernetAccessTokenCryptographer(AccessTokenCryptographer):
 
     @override
     def crypto(self, access_token_id: AccessTokenId) -> RawAccessToken:
-        return cast(
-            "RawAccessToken",
-            self._fernet.encrypt(
-                str(access_token_id).encode("utf-8"),
-            ).decode("utf-8"),
-        )
+        return self._fernet.encrypt(
+            str(access_token_id).encode("utf-8"),
+        ).decode("utf-8")
 
     @override
     def decrypto(self, raw_access_token: RawAccessToken) -> AccessTokenId | None:

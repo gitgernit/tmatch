@@ -21,3 +21,9 @@ class PostgresConfig:
 class AccessTokenConfig:
     crypto_key: str
     expires_in_seconds: int
+
+
+@dataclass(frozen=True)
+class YandexOAuthConfig:
+    client_id: str
+    client_secret: str

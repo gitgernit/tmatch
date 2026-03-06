@@ -1,8 +1,18 @@
 from adaptix import Retort
 
-from app.infra.config.models import AccessTokenConfigModel, PostgresConfigModel, ServerConfigModel
+from app.infra.config.models import (
+    AccessTokenConfigModel,
+    PostgresConfigModel,
+    ServerConfigModel,
+    YandexOAuthConfigModel,
+)
 from app.infra.config.sources import EnvSource
-from app.presentation.api.config.models import AccessTokenConfig, PostgresConfig, ServerConfig
+from app.presentation.api.config.models import (
+    AccessTokenConfig,
+    PostgresConfig,
+    ServerConfig,
+    YandexOAuthConfig,
+)
 
 retort = Retort()
 
@@ -36,3 +46,11 @@ class EnvAccessTokenConfigLoader(BaseEnvLoader):
         validated = AccessTokenConfigModel.model_validate(raw_data).model_dump()
 
         return retort.load(validated, AccessTokenConfig)
+
+
+class EnvYandexOAuthConfigLoader(BaseEnvLoader):
+    def load(self) -> YandexOAuthConfig:
+        raw_data = self._source.get_present_values(["YANDEX_OAUTH_CLIENT_ID", "YANDEX_OAUTH_CLIENT_SECRET"])
+        validated = YandexOAuthConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, YandexOAuthConfig)

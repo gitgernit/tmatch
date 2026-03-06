@@ -22,3 +22,8 @@ class PostgresConfigModel(BaseConfigModel):
 class AccessTokenConfigModel(BaseConfigModel):
     crypto_key: str = Field(default="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", alias="ACCESS_TOKEN_CRYPTO_KEY")
     expires_in_seconds: int = Field(default=86400, ge=1, alias="ACCESS_TOKEN_EXPIRES_IN_SECONDS")
+
+
+class YandexOAuthConfigModel(BaseConfigModel):
+    client_id: str = Field(default="", alias="YANDEX_OAUTH_CLIENT_ID")
+    client_secret: str = Field(default="", alias="YANDEX_OAUTH_CLIENT_SECRET")

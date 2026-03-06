@@ -2,20 +2,21 @@ import asyncio
 import sys
 
 import uvicorn
-from dotenv import load_dotenv
 from dishka import AsyncContainer
 from dishka.integrations.litestar import setup_dishka
+from dotenv import load_dotenv
 from litestar import Litestar
 
 from app.infra.logging.structlog import configure_logging
 from app.presentation.api.bootstrap.di.container import build_container
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
 from app.presentation.api.config.models import ServerConfig
+from app.presentation.api.routes.auth.router import router as auth_router
 from app.presentation.api.routes.healthcheck.router import router as healthcheck_router
 
 
 def create_app(container: AsyncContainer) -> Litestar:
-    app = Litestar(route_handlers=[healthcheck_router])
+    app = Litestar(route_handlers=[healthcheck_router, auth_router])
     setup_dishka(container=container, app=app)
     return app
 

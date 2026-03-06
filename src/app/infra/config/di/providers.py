@@ -4,9 +4,15 @@ from app.infra.config.loaders import (
     EnvAccessTokenConfigLoader,
     EnvPostgresConfigLoader,
     EnvServerConfigLoader,
+    EnvYandexOAuthConfigLoader,
 )
 from app.infra.config.sources import EnvSource
-from app.presentation.api.config.models import AccessTokenConfig, PostgresConfig, ServerConfig
+from app.presentation.api.config.models import (
+    AccessTokenConfig,
+    PostgresConfig,
+    ServerConfig,
+    YandexOAuthConfig,
+)
 
 
 class SourcesProvider(Provider):
@@ -24,6 +30,7 @@ class ConfigProvider(Provider):
         EnvServerConfigLoader,
         EnvPostgresConfigLoader,
         EnvAccessTokenConfigLoader,
+        EnvYandexOAuthConfigLoader,
     )
 
     @provide
@@ -36,6 +43,10 @@ class ConfigProvider(Provider):
 
     @provide
     def env_access_token_config(self, loader: EnvAccessTokenConfigLoader) -> AccessTokenConfig:
+        return loader.load()
+
+    @provide
+    def env_yandex_oauth_config(self, loader: EnvYandexOAuthConfigLoader) -> YandexOAuthConfig:
         return loader.load()
 
 
