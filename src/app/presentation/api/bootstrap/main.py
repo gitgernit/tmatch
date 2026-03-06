@@ -6,17 +6,31 @@ from dishka import AsyncContainer
 from dishka.integrations.litestar import setup_dishka
 from dotenv import load_dotenv
 from litestar import Litestar
+from litestar.contrib.opentelemetry import OpenTelemetryConfig, OpenTelemetryPlugin
 
 from app.infra.logging.structlog import configure_logging
+from app.infra.observability.opentelemetry.instrumentation.tracing import setup_tracing
 from app.presentation.api.bootstrap.di.container import build_container
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
-from app.presentation.api.config.models import ServerConfig
+from app.presentation.api.config.models import OpentelemetryConfig, ServerConfig
 from app.presentation.api.routes.auth.router import router as auth_router
 from app.presentation.api.routes.healthcheck.router import router as healthcheck_router
+from app.presentation.api.routes.metrics.middleware import metrics_middleware
+from app.presentation.api.routes.metrics.router import router as metrics_router
 
 
-def create_app(container: AsyncContainer) -> Litestar:
-    app = Litestar(route_handlers=[healthcheck_router, auth_router])
+def create_app(
+    container: AsyncContainer,
+    otel_config: OpentelemetryConfig,
+) -> Litestar:
+    tracer_provider = setup_tracing(otel_config)
+    litestar_otel_config = OpenTelemetryConfig(tracer_provider=tracer_provider)
+
+    app = Litestar(
+        route_handlers=[healthcheck_router, auth_router, metrics_router],
+        middleware=[metrics_middleware],
+        plugins=[OpenTelemetryPlugin(config=litestar_otel_config)],
+    )
     setup_dishka(container=container, app=app)
     return app
 
@@ -30,7 +44,8 @@ async def main() -> None:
         await persistence_bootstrapper.bootstrap()
 
         server_config = await container.get(ServerConfig)
-        app = create_app(container)
+        otel_config = await container.get(OpentelemetryConfig)
+        app = create_app(container, otel_config)
         config = uvicorn.Config(
             app,
             workers=server_config.workers,

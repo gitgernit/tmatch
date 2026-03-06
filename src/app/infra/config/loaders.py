@@ -2,6 +2,7 @@ from adaptix import Retort
 
 from app.infra.config.models import (
     AccessTokenConfigModel,
+    OpentelemetryConfigModel,
     PostgresConfigModel,
     ServerConfigModel,
     YandexOAuthConfigModel,
@@ -9,6 +10,7 @@ from app.infra.config.models import (
 from app.infra.config.sources import EnvSource
 from app.presentation.api.config.models import (
     AccessTokenConfig,
+    OpentelemetryConfig,
     PostgresConfig,
     ServerConfig,
     YandexOAuthConfig,
@@ -54,3 +56,13 @@ class EnvYandexOAuthConfigLoader(BaseEnvLoader):
         validated = YandexOAuthConfigModel.model_validate(raw_data).model_dump()
 
         return retort.load(validated, YandexOAuthConfig)
+
+
+class EnvOpentelemetryConfigLoader(BaseEnvLoader):
+    def load(self) -> OpentelemetryConfig:
+        raw_data = self._source.get_present_values(
+            ["OTEL_TRACES_EXPORTER", "OTEL_EXPORTER_OTLP_ENDPOINT", "OTEL_SERVICE_NAME"]
+        )
+        validated = OpentelemetryConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, OpentelemetryConfig)

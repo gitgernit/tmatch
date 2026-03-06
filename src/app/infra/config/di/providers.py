@@ -2,6 +2,7 @@ from dishka import BaseScope, Provider, Scope, provide, provide_all
 
 from app.infra.config.loaders import (
     EnvAccessTokenConfigLoader,
+    EnvOpentelemetryConfigLoader,
     EnvPostgresConfigLoader,
     EnvServerConfigLoader,
     EnvYandexOAuthConfigLoader,
@@ -9,6 +10,7 @@ from app.infra.config.loaders import (
 from app.infra.config.sources import EnvSource
 from app.presentation.api.config.models import (
     AccessTokenConfig,
+    OpentelemetryConfig,
     PostgresConfig,
     ServerConfig,
     YandexOAuthConfig,
@@ -31,6 +33,7 @@ class ConfigProvider(Provider):
         EnvPostgresConfigLoader,
         EnvAccessTokenConfigLoader,
         EnvYandexOAuthConfigLoader,
+        EnvOpentelemetryConfigLoader,
     )
 
     @provide
@@ -47,6 +50,12 @@ class ConfigProvider(Provider):
 
     @provide
     def env_yandex_oauth_config(self, loader: EnvYandexOAuthConfigLoader) -> YandexOAuthConfig:
+        return loader.load()
+
+    @provide
+    def env_opentelemetry_config(
+        self, loader: EnvOpentelemetryConfigLoader
+    ) -> OpentelemetryConfig:
         return loader.load()
 
 

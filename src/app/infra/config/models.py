@@ -27,3 +27,11 @@ class AccessTokenConfigModel(BaseConfigModel):
 class YandexOAuthConfigModel(BaseConfigModel):
     client_id: str = Field(default="", alias="YANDEX_OAUTH_CLIENT_ID")
     client_secret: str = Field(default="", alias="YANDEX_OAUTH_CLIENT_SECRET")
+
+
+class OpentelemetryConfigModel(BaseConfigModel):
+    traces_exporter: str = Field(default="console", alias="OTEL_TRACES_EXPORTER")
+    exporter_otlp_endpoint: str = Field(
+        default="http://localhost:4317", alias="OTEL_EXPORTER_OTLP_ENDPOINT"
+    )
+    service_name: str = Field(default="app", alias="OTEL_SERVICE_NAME")

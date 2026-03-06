@@ -27,3 +27,10 @@ class AccessTokenConfig:
 class YandexOAuthConfig:
     client_id: str
     client_secret: str
+
+
+@dataclass(frozen=True)
+class OpentelemetryConfig:
+    traces_exporter: str
+    exporter_otlp_endpoint: str
+    service_name: str
