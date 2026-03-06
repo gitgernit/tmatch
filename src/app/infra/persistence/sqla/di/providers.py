@@ -5,10 +5,12 @@ from dishka import BaseScope, Provider, Scope, WithParents, provide, provide_all
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 
 from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
+from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
+from app.presentation.api.bootstrap.readiness_checker import ReadinessChecker
 from app.presentation.api.config.models import PostgresConfig
 
 
@@ -36,6 +38,11 @@ class SqlaProvider(Provider):
     persistence_bootstrapper = provide(
         source=SqlaPersistenceBootstrapper,
         provides=PersistenceBootstrapper,
+        scope=Scope.APP,
+    )
+    readiness_checker = provide(
+        source=SqlaReadinessChecker,
+        provides=ReadinessChecker,
         scope=Scope.APP,
     )
 
