@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from firebase_admin import credentials  # type: ignore[import-untyped]
 from litestar import Litestar
 from litestar.contrib.opentelemetry import OpenTelemetryConfig, OpenTelemetryPlugin
+from litestar.openapi import OpenAPIConfig
+from litestar.openapi.spec import Components
+from litestar.openapi.spec.security_scheme import SecurityScheme
 
 from app.infra.logging.structlog import configure_logging
 from app.infra.observability.opentelemetry.instrumentation.tracing import setup_tracing
@@ -29,10 +32,24 @@ def create_app(
     tracer_provider = setup_tracing(otel_config)
     litestar_otel_config = OpenTelemetryConfig(tracer_provider=tracer_provider)
 
+    openapi_config = OpenAPIConfig(
+        title="API",
+        version="1.0.0",
+        components=Components(
+            security_schemes={
+                "BearerToken": SecurityScheme(
+                    type="http",
+                    scheme="Bearer",
+                    bearer_format="JWT",
+                ),
+            },
+        ),
+    )
     app = Litestar(
         route_handlers=[healthcheck_router, auth_router, metrics_router, notifications_router],
         middleware=[metrics_middleware],
         plugins=[OpenTelemetryPlugin(config=litestar_otel_config)],
+        openapi_config=openapi_config,
     )
     setup_dishka(container=container, app=app)
     return app

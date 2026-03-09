@@ -28,6 +28,7 @@ class RegisterDeviceBody(BaseModel):
 @post(
     path="/send",
     summary="Send push notification",
+    security=[{"BearerToken": []}],
 )
 async def send_notification(
     data: SendNotificationBody,
@@ -44,6 +45,7 @@ async def send_notification(
 @post(
     path="/register_device",
     summary="Register FCM device token",
+    security=[{"BearerToken": []}],
 )
 async def register_notification_device(
     data: RegisterDeviceBody,
