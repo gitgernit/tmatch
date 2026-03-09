@@ -42,3 +42,10 @@ class AuthError(Exception):
     @override
     def __str__(self) -> str:
         return "Authentication failed"
+
+
+@dataclass(frozen=True, slots=True)
+class UserUnauthorizedError(Exception):
+    @override
+    def __str__(self) -> str:
+        return "Unauthorized"

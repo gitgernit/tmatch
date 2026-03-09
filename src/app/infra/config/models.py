@@ -30,8 +30,12 @@ class YandexOAuthConfigModel(BaseConfigModel):
 
 
 class OpentelemetryConfigModel(BaseConfigModel):
-    traces_exporter: str = Field(default="console", alias="OTEL_TRACES_EXPORTER")
+    traces_exporter: str = Field(default="otlp", alias="OTEL_TRACES_EXPORTER")
     exporter_otlp_endpoint: str = Field(
         default="http://localhost:4317", alias="OTEL_EXPORTER_OTLP_ENDPOINT"
     )
     service_name: str = Field(default="app", alias="OTEL_SERVICE_NAME")
+
+
+class FirebaseConfigModel(BaseConfigModel):
+    certificate_path: str = Field(default="", alias="FIREBASE_CERTIFICATE_PATH")

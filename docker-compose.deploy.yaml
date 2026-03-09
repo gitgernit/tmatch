@@ -1,6 +1,0 @@
-services:
-  api:
-    image: backend-api:latest
-    restart: always
-    ports:
-      - "8080:8080"

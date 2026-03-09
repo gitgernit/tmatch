@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
+from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
 from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
@@ -56,6 +57,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultUserDataGateway],
         WithParents[DefaultAccessTokenDataGateway],
         WithParents[DefaultAuthIdentityDataGateway],
+        WithParents[DefaultNotificationDeviceDataGateway],
     )
 
 

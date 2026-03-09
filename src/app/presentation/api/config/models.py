@@ -34,3 +34,8 @@ class OpentelemetryConfig:
     traces_exporter: str
     exporter_otlp_endpoint: str
     service_name: str
+
+
+@dataclass(frozen=True)
+class FirebaseConfig:
+    certificate_path: str

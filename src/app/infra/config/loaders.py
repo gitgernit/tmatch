@@ -2,6 +2,7 @@ from adaptix import Retort
 
 from app.infra.config.models import (
     AccessTokenConfigModel,
+    FirebaseConfigModel,
     OpentelemetryConfigModel,
     PostgresConfigModel,
     ServerConfigModel,
@@ -10,6 +11,7 @@ from app.infra.config.models import (
 from app.infra.config.sources import EnvSource
 from app.presentation.api.config.models import (
     AccessTokenConfig,
+    FirebaseConfig,
     OpentelemetryConfig,
     PostgresConfig,
     ServerConfig,
@@ -66,3 +68,11 @@ class EnvOpentelemetryConfigLoader(BaseEnvLoader):
         validated = OpentelemetryConfigModel.model_validate(raw_data).model_dump()
 
         return retort.load(validated, OpentelemetryConfig)
+
+
+class EnvFirebaseConfigLoader(BaseEnvLoader):
+    def load(self) -> FirebaseConfig:
+        raw_data = self._source.get_present_values(["FIREBASE_CERTIFICATE_PATH"])
+        validated = FirebaseConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, FirebaseConfig)
