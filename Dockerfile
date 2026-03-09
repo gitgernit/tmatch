@@ -21,7 +21,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 COPY ./src ./src
 
-RUN uv sync --frozen --no-dev --no-cache
+RUN uv sync --frozen --no-cache
 
 
 # ---------------------------------------------- api
