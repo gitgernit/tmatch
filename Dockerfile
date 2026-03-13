@@ -18,10 +18,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock README.md ./
 COPY ./src ./src
 
-RUN uv sync --frozen --no-dev --no-cache
+RUN uv sync --frozen --no-cache --group backend
 
 
 # ---------------------------------------------- api
