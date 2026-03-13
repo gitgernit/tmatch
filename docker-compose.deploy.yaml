@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   api:
-    image: ${API_IMAGE:-$CI_REGISTRY_IMAGE/api:latest}
+    image: ${API_IMAGE:-api:latest}
     restart: always
     depends_on:
       postgres:
