@@ -1,8 +1,22 @@
 from adaptix import Retort
 
-from app.infra.config.models import AccessTokenConfigModel, PostgresConfigModel, ServerConfigModel
+from app.infra.config.models import (
+    AccessTokenConfigModel,
+    FirebaseConfigModel,
+    OpentelemetryConfigModel,
+    PostgresConfigModel,
+    ServerConfigModel,
+    YandexOAuthConfigModel,
+)
 from app.infra.config.sources import EnvSource
-from app.presentation.api.config.models import AccessTokenConfig, PostgresConfig, ServerConfig
+from app.presentation.api.config.models import (
+    AccessTokenConfig,
+    FirebaseConfig,
+    OpentelemetryConfig,
+    PostgresConfig,
+    ServerConfig,
+    YandexOAuthConfig,
+)
 
 retort = Retort()
 
@@ -36,3 +50,29 @@ class EnvAccessTokenConfigLoader(BaseEnvLoader):
         validated = AccessTokenConfigModel.model_validate(raw_data).model_dump()
 
         return retort.load(validated, AccessTokenConfig)
+
+
+class EnvYandexOAuthConfigLoader(BaseEnvLoader):
+    def load(self) -> YandexOAuthConfig:
+        raw_data = self._source.get_present_values(["YANDEX_OAUTH_CLIENT_ID", "YANDEX_OAUTH_CLIENT_SECRET"])
+        validated = YandexOAuthConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, YandexOAuthConfig)
+
+
+class EnvOpentelemetryConfigLoader(BaseEnvLoader):
+    def load(self) -> OpentelemetryConfig:
+        raw_data = self._source.get_present_values(
+            ["OTEL_TRACES_EXPORTER", "OTEL_EXPORTER_OTLP_ENDPOINT", "OTEL_SERVICE_NAME"]
+        )
+        validated = OpentelemetryConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, OpentelemetryConfig)
+
+
+class EnvFirebaseConfigLoader(BaseEnvLoader):
+    def load(self) -> FirebaseConfig:
+        raw_data = self._source.get_present_values(["FIREBASE_CERTIFICATE_PATH"])
+        validated = FirebaseConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, FirebaseConfig)

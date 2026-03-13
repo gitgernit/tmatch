@@ -6,9 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 
 from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
+from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
+from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
+from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
+from app.presentation.api.bootstrap.readiness_checker import ReadinessChecker
 from app.presentation.api.config.models import PostgresConfig
 
 
@@ -38,6 +42,11 @@ class SqlaProvider(Provider):
         provides=PersistenceBootstrapper,
         scope=Scope.APP,
     )
+    readiness_checker = provide(
+        source=SqlaReadinessChecker,
+        provides=ReadinessChecker,
+        scope=Scope.APP,
+    )
 
 
 class DataGatewayProvider(Provider):
@@ -47,6 +56,8 @@ class DataGatewayProvider(Provider):
     data_gateways = provide_all(
         WithParents[DefaultUserDataGateway],
         WithParents[DefaultAccessTokenDataGateway],
+        WithParents[DefaultAuthIdentityDataGateway],
+        WithParents[DefaultNotificationDeviceDataGateway],
     )
 
 

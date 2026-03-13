@@ -22,3 +22,20 @@ class PostgresConfigModel(BaseConfigModel):
 class AccessTokenConfigModel(BaseConfigModel):
     crypto_key: str = Field(default="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", alias="ACCESS_TOKEN_CRYPTO_KEY")
     expires_in_seconds: int = Field(default=86400, ge=1, alias="ACCESS_TOKEN_EXPIRES_IN_SECONDS")
+
+
+class YandexOAuthConfigModel(BaseConfigModel):
+    client_id: str = Field(default="", alias="YANDEX_OAUTH_CLIENT_ID")
+    client_secret: str = Field(default="", alias="YANDEX_OAUTH_CLIENT_SECRET")
+
+
+class OpentelemetryConfigModel(BaseConfigModel):
+    traces_exporter: str = Field(default="otlp", alias="OTEL_TRACES_EXPORTER")
+    exporter_otlp_endpoint: str = Field(
+        default="http://localhost:4317", alias="OTEL_EXPORTER_OTLP_ENDPOINT"
+    )
+    service_name: str = Field(default="app", alias="OTEL_SERVICE_NAME")
+
+
+class FirebaseConfigModel(BaseConfigModel):
+    certificate_path: str = Field(default="", alias="FIREBASE_CERTIFICATE_PATH")

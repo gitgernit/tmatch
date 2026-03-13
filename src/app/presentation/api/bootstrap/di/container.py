@@ -1,14 +1,26 @@
 from dishka import STRICT_VALIDATION, AsyncContainer, make_async_container
+from dishka.integrations.litestar import LitestarProvider
 
+from app.application.auth_identity.di.providers import providers as auth_identity_providers
+from app.application.notification_device.di.providers import providers as notification_device_providers
 from app.infra.config.di.providers import providers as config_providers
+from app.infra.notifications.di.providers import providers as notification_providers
+from app.infra.oauth.di.providers import providers as oauth_providers
 from app.infra.persistence.sqla.di.providers import providers as sqla_providers
 from app.infra.security.di.providers import providers as security_providers
+from app.presentation.api.bootstrap.di.identity_provider import IdentityProviderProvider
 
 
 def build_container() -> AsyncContainer:
     return make_async_container(
+        LitestarProvider(),
         *config_providers,
         *sqla_providers,
         *security_providers,
+        *oauth_providers,
+        *auth_identity_providers,
+        *notification_providers,
+        IdentityProviderProvider(),
+        *notification_device_providers,
         validation_settings=STRICT_VALIDATION,
     )

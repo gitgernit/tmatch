@@ -33,7 +33,16 @@ async def configure_logging() -> None:
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
 
-    for foreign_logger in ["uvicorn", "uvicorn.access", "uvicorn.asgi", "uvicorn.error", "fastapi", "custom"]:
+    for foreign_logger in [
+        "uvicorn",
+        "uvicorn.access",
+        "uvicorn.asgi",
+        "uvicorn.error",
+        "fastapi",
+        "custom",
+        "httpx",
+        "httpcore",
+    ]:
         logger = logging.getLogger(foreign_logger)
         logger.handlers = [handler]
         logger.propagate = False
