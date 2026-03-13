@@ -36,13 +36,15 @@ deploy:
     GIT_STRATEGY: none
   before_script:
     - apk add --no-cache openssh-client
+    - eval "$(ssh-agent -s)"
+    - printf '%s\n' "$DEPLOY_SSH_KEY" | tr -d '\r' > /tmp/deploy_key
+    - chmod 600 /tmp/deploy_key
+    - ssh-add /tmp/deploy_key
     - mkdir -p ~/.ssh
-    - echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
     - >
-      ssh -i ~/.ssh/id_rsa "$DEPLOY_USER@$DEPLOY_HOST"
+      ssh "$DEPLOY_USER@$DEPLOY_HOST"
       "cd /home/ubuntu/app &&
        git pull &&
        docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\" &&
