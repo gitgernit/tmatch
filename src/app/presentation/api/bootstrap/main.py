@@ -23,6 +23,7 @@ from app.presentation.api.routes.healthcheck.router import router as healthcheck
 from app.presentation.api.routes.metrics.middleware import metrics_middleware
 from app.presentation.api.routes.metrics.router import router as metrics_router
 from app.presentation.api.routes.notifications.router import router as notifications_router
+from app.presentation.api.routes.profile.router import router as profile_router
 
 
 def create_app(
@@ -46,7 +47,7 @@ def create_app(
         ),
     )
     app = Litestar(
-        route_handlers=[healthcheck_router, auth_router, metrics_router, notifications_router],
+        route_handlers=[healthcheck_router, auth_router, profile_router, metrics_router, notifications_router],
         middleware=[metrics_middleware],
         plugins=[OpenTelemetryPlugin(config=litestar_otel_config)],
         openapi_config=openapi_config,

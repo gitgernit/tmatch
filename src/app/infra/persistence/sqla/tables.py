@@ -3,6 +3,7 @@ from typing import Final
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, MetaData, String, Table, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import registry
+from sqlalchemy.types import PickleType
 
 from app.domain.access_token.entity import AccessToken
 from app.domain.auth_identity.entity import AuthIdentity
@@ -19,6 +20,7 @@ user_table: Final = Table(
     Column("id", UUID, primary_key=True),
     Column("deleted_at", DateTime(timezone=True)),
     Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("profile", PickleType, nullable=True),
 )
 
 auth_identity_table: Final = Table(
