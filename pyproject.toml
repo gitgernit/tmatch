@@ -6,11 +6,14 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "adaptix==3.0.0b11",
+    "cryptography>=46.0.5",
     "dishka>=1.7.2",
+    "greenlet>=3.3.1",
     "psycopg[binary]>=3.3.2",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.46",
+    "uuid-utils>=0.14.1",
 ]
 
 [dependency-groups]
