@@ -7,7 +7,7 @@ stages:
   - test
   - deploy
 
-build_image:
+build_and_push:
   stage: build
   image: docker:24.0.5
   services:
@@ -66,6 +66,6 @@ deploy:
        API_IMAGE=\"$CI_REGISTRY_IMAGE/api:latest\" docker compose -f docker-compose.deploy.yaml down &&
        API_IMAGE=\"$CI_REGISTRY_IMAGE/api:latest\" docker compose -f docker-compose.deploy.yaml up -d"
   needs:
-    - build_image
+    - build_and_push
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
