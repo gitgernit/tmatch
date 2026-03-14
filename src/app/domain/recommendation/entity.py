@@ -1,10 +1,10 @@
 from datetime import UTC, datetime
-from typing import Any, Self
+from typing import Self
 
 from uuid_utils.compat import uuid7
 
 from app.domain.common.entity import Entity, entity
-from app.domain.recommendation.value_objects import CompatibilityType, RecommendationId
+from app.domain.recommendation.value_objects import RecommendationId, RecommendationReason
 from app.domain.user.entity import UserId
 
 
@@ -13,9 +13,7 @@ class Recommendation(Entity[RecommendationId]):
     ml_recommendation_id: str
     user_id: UserId
     candidate_user_id: UserId
-    score: float
-    reason_type: CompatibilityType
-    reason_details: dict[str, Any] | None
+    reasons: list[RecommendationReason]
 
     @classmethod
     def factory(
@@ -23,9 +21,7 @@ class Recommendation(Entity[RecommendationId]):
         ml_recommendation_id: str,
         user_id: UserId,
         candidate_user_id: UserId,
-        score: float,
-        reason_type: CompatibilityType,
-        reason_details: dict[str, Any] | None = None,
+        reasons: list[RecommendationReason],
     ) -> Self:
         return cls(
             id=RecommendationId(uuid7()),
@@ -33,7 +29,5 @@ class Recommendation(Entity[RecommendationId]):
             ml_recommendation_id=ml_recommendation_id,
             user_id=user_id,
             candidate_user_id=candidate_user_id,
-            score=score,
-            reason_type=reason_type,
-            reason_details=reason_details,
+            reasons=reasons,
         )

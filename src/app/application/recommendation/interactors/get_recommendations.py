@@ -7,6 +7,7 @@ from app.application.profile.errors import ProfileNotFoundError
 from app.application.recommendation.dto import RecommendationsResult
 from app.application.recommendation.protocol import RecommendationProvider
 from app.domain.recommendation.entity import Recommendation
+from app.domain.recommendation.value_objects import RecommendationReason
 from app.domain.user.entity import UserId
 
 
@@ -26,9 +27,13 @@ class GetRecommendationsInteractor:
                 ml_recommendation_id=item.ml_recommendation_id,
                 user_id=user.id,
                 candidate_user_id=UserId(UUID(item.candidate_user_id)),
-                score=item.score,
-                reason_type=item.reason_type,
-                reason_details=item.reason_details,
+                reasons=[
+                    RecommendationReason(
+                        score=reason.score,
+                        reason_type=reason.reason_type,
+                    )
+                    for reason in item.reasons
+                ],
             )
             await self.unit_of_work.add(recommendation)
         await self.unit_of_work.commit()

@@ -33,9 +33,13 @@ async def get_recommendations(
             {
                 "ml_recommendation_id": item.ml_recommendation_id,
                 "candidate_user_id": item.candidate_user_id,
-                "score": item.score,
-                "reason_type": item.reason_type,
-                "reason_details": item.reason_details,
+                "reasons": [
+                    {
+                        "score": reason.score,
+                        "reason_type": reason.reason_type,
+                    }
+                    for reason in item.reasons
+                ],
             }
             for item in result.items
         ],

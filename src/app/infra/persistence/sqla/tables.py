@@ -6,7 +6,6 @@ from sqlalchemy import (
     Date,
     DateTime,
     Enum,
-    Float,
     ForeignKey,
     MetaData,
     String,
@@ -18,7 +17,6 @@ from sqlalchemy.orm import registry
 
 from app.domain.audit_event.value_objects import AuditEventType
 from app.domain.auth_identity.value_objects import AuthMethod
-from app.domain.recommendation.value_objects import CompatibilityType
 from app.infra.persistence.sqla.rows import (
     AccessTokenRow,
     AuditEventRow,
@@ -94,9 +92,7 @@ recommendation_table: Final = Table(
     Column("ml_recommendation_id", String, nullable=False),
     Column("user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
     Column("candidate_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
-    Column("score", Float, nullable=False),
-    Column("reason_type", Enum(CompatibilityType, name="compatibility_type"), nullable=False),
-    Column("reason_details", JSONB, nullable=True),
+    Column("reasons", JSONB, nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
 )
 

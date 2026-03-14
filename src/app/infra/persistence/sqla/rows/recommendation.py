@@ -1,8 +1,5 @@
 from datetime import datetime
-from typing import Any
 from uuid import UUID
-
-from app.domain.recommendation.value_objects import CompatibilityType
 
 
 class RecommendationRow:
@@ -10,9 +7,7 @@ class RecommendationRow:
     ml_recommendation_id: str | None
     user_id: UUID | None
     candidate_user_id: UUID | None
-    score: float | None
-    reason_type: CompatibilityType | None
-    reason_details: dict[str, Any] | None
+    reasons: list[dict[str, float | str]] | None
     created_at: datetime | None
 
     def __init__(
@@ -21,16 +16,12 @@ class RecommendationRow:
         ml_recommendation_id: str | None = None,
         user_id: UUID | None = None,
         candidate_user_id: UUID | None = None,
-        score: float | None = None,
-        reason_type: CompatibilityType | None = None,
-        reason_details: dict[str, Any] | None = None,
+        reasons: list[dict[str, float | str]] | None = None,
         created_at: datetime | None = None,
     ) -> None:
         self.id = id_
         self.ml_recommendation_id = ml_recommendation_id
         self.user_id = user_id
         self.candidate_user_id = candidate_user_id
-        self.score = score
-        self.reason_type = reason_type
-        self.reason_details = reason_details
+        self.reasons = reasons
         self.created_at = created_at
