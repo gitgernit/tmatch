@@ -11,8 +11,10 @@ from app.infra.persistence.sqla.data_gateways.notification_device import Default
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
 from app.infra.persistence.sqla.mappers import GlobalDataMapper
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
+from app.infra.persistence.sqla.mappers.audit_event_mapper import AuditEventMapper
 from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
 from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
+from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
 from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
 from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
@@ -61,6 +63,8 @@ class MapperProvider(Provider):
     auth_identity_mapper = provide(AuthIdentityMapper, scope=Scope.REQUEST)
     access_token_mapper = provide(AccessTokenMapper, scope=Scope.REQUEST)
     notification_device_mapper = provide(NotificationDeviceMapper, scope=Scope.REQUEST)
+    recommendation_mapper = provide(RecommendationMapper, scope=Scope.REQUEST)
+    audit_event_mapper = provide(AuditEventMapper, scope=Scope.REQUEST)
     global_data_mapper = provide(GlobalDataMapper, scope=Scope.REQUEST)
 
 

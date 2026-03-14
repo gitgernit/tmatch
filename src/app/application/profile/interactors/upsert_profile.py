@@ -4,6 +4,8 @@ from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.profile.dto import ProfileResult
+from app.domain.audit_event.entity import AuditEvent
+from app.domain.audit_event.value_objects import AuditEventType
 from app.domain.user.value_objects import Profile
 
 
@@ -21,14 +23,29 @@ class UpsertProfileInteractor:
         avatar_url: str | None,
     ) -> ProfileResult:
         user = await self.identity_provider.get_current_user()
-        profile = Profile(
-            first_name=first_name,
-            last_name=last_name,
-            birth_date=birth_date,
-            region=region,
-            avatar_url=avatar_url,
-        )
+        if user.profile is None:
+            profile = Profile(
+                first_name=first_name,
+                last_name=last_name,
+                birth_date=birth_date,
+                region=region,
+                avatar_url=avatar_url,
+            )
+        else:
+            profile = Profile(
+                first_name=user.profile.first_name,
+                last_name=user.profile.last_name,
+                birth_date=user.profile.birth_date,
+                region=user.profile.region,
+                avatar_url=avatar_url,
+            )
         user.profile = profile
         await self.unit_of_work.add(user)
+        audit_event = AuditEvent.factory(
+            event_type=AuditEventType.PROFILE_UPDATED,
+            actor_user_id=user.id,
+            payload={},
+        )
+        await self.unit_of_work.add(audit_event)
         await self.unit_of_work.commit()
         return ProfileResult(user_id=str(user.id), profile=profile)

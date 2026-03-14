@@ -4,7 +4,9 @@ from dishka.integrations.litestar import LitestarProvider
 from app.application.auth_identity.di.providers import providers as auth_identity_providers
 from app.application.notification_device.di.providers import providers as notification_device_providers
 from app.application.profile.di.providers import providers as profile_providers
+from app.application.recommendation.di.providers import providers as recommendation_providers
 from app.infra.config.di.providers import providers as config_providers
+from app.infra.ml.di.providers import providers as ml_providers
 from app.infra.notifications.di.providers import providers as notification_providers
 from app.infra.oauth.di.providers import providers as oauth_providers
 from app.infra.persistence.sqla.di.providers import providers as sqla_providers
@@ -19,10 +21,12 @@ def build_container() -> AsyncContainer:
         *sqla_providers,
         *security_providers,
         *oauth_providers,
+        *ml_providers,
         *auth_identity_providers,
         *notification_providers,
         IdentityProviderProvider(),
         *notification_device_providers,
         *profile_providers,
+        *recommendation_providers,
         validation_settings=STRICT_VALIDATION,
     )

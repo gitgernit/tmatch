@@ -1,15 +1,31 @@
 from typing import Final
 
-from sqlalchemy import Boolean, Column, Date, DateTime, Enum, ForeignKey, MetaData, String, Table, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    MetaData,
+    String,
+    Table,
+    UniqueConstraint,
+)
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import registry
 
+from app.domain.audit_event.value_objects import AuditEventType
 from app.domain.auth_identity.value_objects import AuthMethod
+from app.domain.recommendation.value_objects import CompatibilityType
 from app.infra.persistence.sqla.rows import (
     AccessTokenRow,
+    AuditEventRow,
     AuthIdentityRow,
     NotificationDeviceRow,
     ProfileRow,
+    RecommendationRow,
     UserRow,
 )
 
@@ -71,8 +87,35 @@ notification_device_table: Final = Table(
     UniqueConstraint("user_id", "device_id", name="uq_notification_devices_user_device"),
 )
 
+recommendation_table: Final = Table(
+    "recommendations",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column("user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("candidate_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("score", Float, nullable=False),
+    Column("reason_type", Enum(CompatibilityType, name="compatibility_type"), nullable=False),
+    Column("reason_details", JSONB, nullable=True),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+)
+
+audit_event_table: Final = Table(
+    "audit_events",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column("event_type", Enum(AuditEventType, name="audit_event_type"), nullable=False),
+    Column("actor_user_id", UUID, ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
+    Column("target_user_id", UUID, ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
+    Column("payload", JSONB, nullable=True),
+    Column("sent_to_ml", Boolean, nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("deleted_at", DateTime(timezone=True), nullable=True),
+)
+
 mapper_registry.map_imperatively(UserRow, user_table)
 mapper_registry.map_imperatively(ProfileRow, profile_table)
 mapper_registry.map_imperatively(AuthIdentityRow, auth_identity_table)
 mapper_registry.map_imperatively(AccessTokenRow, access_token_table)
 mapper_registry.map_imperatively(NotificationDeviceRow, notification_device_table)
+mapper_registry.map_imperatively(RecommendationRow, recommendation_table)
+mapper_registry.map_imperatively(AuditEventRow, audit_event_table)

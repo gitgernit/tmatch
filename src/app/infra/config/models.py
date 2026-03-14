@@ -39,3 +39,8 @@ class OpentelemetryConfigModel(BaseConfigModel):
 
 class FirebaseConfigModel(BaseConfigModel):
     certificate_path: str = Field(default="", alias="FIREBASE_CERTIFICATE_PATH")
+
+
+class MlConfigModel(BaseConfigModel):
+    recommendation_provider: str = Field(default="mock", alias="ML_RECOMMENDATION_PROVIDER")
+    base_url: str = Field(default="", alias="ML_BASE_URL")

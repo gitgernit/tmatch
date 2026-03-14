@@ -3,6 +3,7 @@ from dishka import BaseScope, Provider, Scope, provide, provide_all
 from app.infra.config.loaders import (
     EnvAccessTokenConfigLoader,
     EnvFirebaseConfigLoader,
+    EnvMlConfigLoader,
     EnvOpentelemetryConfigLoader,
     EnvPostgresConfigLoader,
     EnvServerConfigLoader,
@@ -12,6 +13,7 @@ from app.infra.config.sources import EnvSource
 from app.presentation.api.config.models import (
     AccessTokenConfig,
     FirebaseConfig,
+    MlConfig,
     OpentelemetryConfig,
     PostgresConfig,
     ServerConfig,
@@ -37,6 +39,7 @@ class ConfigProvider(Provider):
         EnvYandexOAuthConfigLoader,
         EnvOpentelemetryConfigLoader,
         EnvFirebaseConfigLoader,
+        EnvMlConfigLoader,
     )
 
     @provide
@@ -63,6 +66,10 @@ class ConfigProvider(Provider):
 
     @provide
     def env_firebase_config(self, loader: EnvFirebaseConfigLoader) -> FirebaseConfig:
+        return loader.load()
+
+    @provide
+    def env_ml_config(self, loader: EnvMlConfigLoader) -> MlConfig:
         return loader.load()
 
 

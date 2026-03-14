@@ -3,6 +3,7 @@ from adaptix import Retort
 from app.infra.config.models import (
     AccessTokenConfigModel,
     FirebaseConfigModel,
+    MlConfigModel,
     OpentelemetryConfigModel,
     PostgresConfigModel,
     ServerConfigModel,
@@ -12,6 +13,7 @@ from app.infra.config.sources import EnvSource
 from app.presentation.api.config.models import (
     AccessTokenConfig,
     FirebaseConfig,
+    MlConfig,
     OpentelemetryConfig,
     PostgresConfig,
     ServerConfig,
@@ -76,3 +78,11 @@ class EnvFirebaseConfigLoader(BaseEnvLoader):
         validated = FirebaseConfigModel.model_validate(raw_data).model_dump()
 
         return retort.load(validated, FirebaseConfig)
+
+
+class EnvMlConfigLoader(BaseEnvLoader):
+    def load(self) -> MlConfig:
+        raw_data = self._source.get_present_values(["ML_RECOMMENDATION_PROVIDER", "ML_BASE_URL"])
+        validated = MlConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, MlConfig)

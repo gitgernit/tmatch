@@ -28,3 +28,15 @@ class DefaultUserDataGateway(UserDataGateway):
         )
         profile_row = profile_result.scalar_one_or_none()
         return self._user_mapper.to_entity(user_row, profile_row)
+
+    @override
+    async def list_user_ids(
+        self,
+        limit: int,
+        exclude_user_id: UserId | None = None,
+    ) -> list[UserId]:
+        stmt = select(user_table.c.id).order_by(user_table.c.id).limit(limit)
+        if exclude_user_id is not None:
+            stmt = stmt.where(user_table.c.id != exclude_user_id)
+        result = await self._session.execute(stmt)
+        return [UserId(row[0]) for row in result.all()]

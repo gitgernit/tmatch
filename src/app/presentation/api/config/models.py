@@ -39,3 +39,9 @@ class OpentelemetryConfig:
 @dataclass(frozen=True)
 class FirebaseConfig:
     certificate_path: str
+
+
+@dataclass(frozen=True)
+class MlConfig:
+    recommendation_provider: str
+    base_url: str

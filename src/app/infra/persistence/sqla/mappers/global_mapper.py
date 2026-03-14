@@ -2,12 +2,21 @@ from typing import Any, cast
 
 from app.domain.common.entity import Entity
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
+from app.infra.persistence.sqla.mappers.audit_event_mapper import AuditEventMapper
 from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
 from app.infra.persistence.sqla.mappers.errors import MapperNotFoundError
 from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
+from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
 from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
 
-_Mapper = UserMapper | AuthIdentityMapper | AccessTokenMapper | NotificationDeviceMapper
+_Mapper = (
+    UserMapper
+    | AuthIdentityMapper
+    | AccessTokenMapper
+    | NotificationDeviceMapper
+    | RecommendationMapper
+    | AuditEventMapper
+)
 
 
 class GlobalDataMapper:
@@ -17,12 +26,16 @@ class GlobalDataMapper:
         auth_identity_mapper: AuthIdentityMapper,
         access_token_mapper: AccessTokenMapper,
         notification_device_mapper: NotificationDeviceMapper,
+        recommendation_mapper: RecommendationMapper,
+        audit_event_mapper: AuditEventMapper,
     ) -> None:
         mappers: list[_Mapper] = [
             user_mapper,
             auth_identity_mapper,
             access_token_mapper,
             notification_device_mapper,
+            recommendation_mapper,
+            audit_event_mapper,
         ]
         self._registry: dict[type[Entity[Any]], _Mapper] = {
             m.entity_type: m for m in mappers
