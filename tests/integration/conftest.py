@@ -7,10 +7,10 @@ from dishka import AsyncContainer
 from dotenv import load_dotenv
 
 from app.application.common.identity_provider import IdentityProvider
-
-load_dotenv(override=False)
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
 from tests.integration.di.container import build_test_container
+
+load_dotenv(override=False)
 
 
 @pytest.fixture(scope="session")

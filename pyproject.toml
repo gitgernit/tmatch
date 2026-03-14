@@ -77,7 +77,7 @@ disallow_untyped_defs = false
 disallow_incomplete_defs = false
 
 [tool.coverage.run]
-omit = ["tests/*", "**/__main__.py", "**/.venv/*", "**/site-packages/*"]
+omit = ["tests/*", "**/__main__.py", "**/.venv/*", "**/site-packages/*", "*dishka_factory*"]
 branch = true
 
 [tool.coverage.report]

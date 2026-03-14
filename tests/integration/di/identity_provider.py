@@ -5,7 +5,7 @@ from app.application.common.identity_provider import IdentityProvider
 from app.domain.user.entity import User
 
 
-class TestIdentityProvider(IdentityProvider):
+class MockIdentityProvider(IdentityProvider):
     def __init__(self) -> None:
         self._user: User | None = None
 
