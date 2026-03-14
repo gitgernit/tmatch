@@ -24,4 +24,3 @@ class RecommendationProviderInfraProvider(Provider):
 providers = [
     RecommendationProviderInfraProvider(),
 ]
-

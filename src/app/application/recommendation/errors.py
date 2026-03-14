@@ -7,4 +7,3 @@ class RecommendationProviderUnavailableError(Exception):
     @override
     def __str__(self) -> str:
         return "Recommendation provider unavailable"
-

@@ -13,6 +13,7 @@ from app.infra.persistence.sqla.mappers import GlobalDataMapper
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
 from app.infra.persistence.sqla.mappers.audit_event_mapper import AuditEventMapper
 from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
+from app.infra.persistence.sqla.mappers.interaction_mapper import InteractionMapper
 from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
 from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
 from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
@@ -64,6 +65,7 @@ class MapperProvider(Provider):
     access_token_mapper = provide(AccessTokenMapper, scope=Scope.REQUEST)
     notification_device_mapper = provide(NotificationDeviceMapper, scope=Scope.REQUEST)
     recommendation_mapper = provide(RecommendationMapper, scope=Scope.REQUEST)
+    interaction_mapper = provide(InteractionMapper, scope=Scope.REQUEST)
     audit_event_mapper = provide(AuditEventMapper, scope=Scope.REQUEST)
     global_data_mapper = provide(GlobalDataMapper, scope=Scope.REQUEST)
 

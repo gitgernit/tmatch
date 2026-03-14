@@ -37,8 +37,7 @@ class RecommendationMapper:
             or row.created_at is None
         ):
             msg = (
-                "RecommendationRow must have id, ml_recommendation_id, user_id, "
-                "candidate_user_id, reasons, created_at"
+                "RecommendationRow must have id, ml_recommendation_id, user_id, candidate_user_id, reasons, created_at"
             )
             raise ValueError(msg)
         return Recommendation(

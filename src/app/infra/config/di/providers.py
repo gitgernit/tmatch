@@ -59,9 +59,7 @@ class ConfigProvider(Provider):
         return loader.load()
 
     @provide
-    def env_opentelemetry_config(
-        self, loader: EnvOpentelemetryConfigLoader
-    ) -> OpentelemetryConfig:
+    def env_opentelemetry_config(self, loader: EnvOpentelemetryConfigLoader) -> OpentelemetryConfig:
         return loader.load()
 
     @provide

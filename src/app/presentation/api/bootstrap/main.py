@@ -20,6 +20,7 @@ from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceB
 from app.presentation.api.config.models import FirebaseConfig, OpentelemetryConfig, ServerConfig
 from app.presentation.api.routes.auth.router import router as auth_router
 from app.presentation.api.routes.healthcheck.router import router as healthcheck_router
+from app.presentation.api.routes.interactions.router import router as interactions_router
 from app.presentation.api.routes.metrics.middleware import metrics_middleware
 from app.presentation.api.routes.metrics.router import router as metrics_router
 from app.presentation.api.routes.notifications.router import router as notifications_router
@@ -53,6 +54,7 @@ def create_app(
             auth_router,
             profile_router,
             recommendations_router,
+            interactions_router,
             metrics_router,
             notifications_router,
         ],

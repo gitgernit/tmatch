@@ -9,4 +9,3 @@ class RecommendationProvider(Protocol):
     @abstractmethod
     async def get_recommendations(self, *, user_id: UserId, limit: int) -> list[RecommendationItem]:
         raise NotImplementedError
-

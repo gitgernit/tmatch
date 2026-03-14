@@ -20,12 +20,7 @@ class NotificationDeviceMapper:
 
     @staticmethod
     def to_entity(row: NotificationDeviceRow) -> NotificationDevice:
-        if (
-            row.id is None
-            or row.user_id is None
-            or row.device_id is None
-            or row.created_at is None
-        ):
+        if row.id is None or row.user_id is None or row.device_id is None or row.created_at is None:
             msg = "NotificationDeviceRow must have id, user_id, device_id, created_at"
             raise ValueError(msg)
         return NotificationDevice(

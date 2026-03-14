@@ -12,4 +12,3 @@ class RecommendationProviderProvider(Provider):
 providers = [
     RecommendationProviderProvider(),
 ]
-

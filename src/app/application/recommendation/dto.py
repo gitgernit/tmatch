@@ -18,4 +18,3 @@ class RecommendationItem:
 @dto
 class RecommendationsResult:
     items: list[RecommendationItem]
-

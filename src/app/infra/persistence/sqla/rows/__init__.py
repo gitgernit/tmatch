@@ -1,6 +1,7 @@
 from app.infra.persistence.sqla.rows.access_token import AccessTokenRow as AccessTokenRow
 from app.infra.persistence.sqla.rows.audit_event import AuditEventRow as AuditEventRow
 from app.infra.persistence.sqla.rows.auth_identity import AuthIdentityRow as AuthIdentityRow
+from app.infra.persistence.sqla.rows.interaction import InteractionRow as InteractionRow
 from app.infra.persistence.sqla.rows.notification_device import (
     NotificationDeviceRow as NotificationDeviceRow,
 )

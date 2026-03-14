@@ -4,8 +4,8 @@ from litestar import Request
 
 from app.application.access_token.cryptographer import AccessTokenCryptographer
 from app.application.access_token.data_gateway import AccessTokenDataGateway
-from app.application.common.identity_provider import IdentityProvider
 from app.application.auth_identity.errors import UserUnauthorizedError
+from app.application.common.identity_provider import IdentityProvider
 from app.application.user.data_gateway import UserDataGateway
 from app.domain.access_token.entity import AccessTokenId
 from app.domain.user.entity import User

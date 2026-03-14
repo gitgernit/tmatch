@@ -51,4 +51,3 @@ router = DishkaRouter(
     route_handlers=[get_recommendations],
     tags=["recommendations"],
 )
-

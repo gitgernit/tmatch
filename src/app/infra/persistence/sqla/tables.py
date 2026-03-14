@@ -17,10 +17,12 @@ from sqlalchemy.orm import registry
 
 from app.domain.audit_event.value_objects import AuditEventType
 from app.domain.auth_identity.value_objects import AuthMethod
+from app.domain.interaction.value_objects import InteractionType
 from app.infra.persistence.sqla.rows import (
     AccessTokenRow,
     AuditEventRow,
     AuthIdentityRow,
+    InteractionRow,
     NotificationDeviceRow,
     ProfileRow,
     RecommendationRow,
@@ -96,6 +98,18 @@ recommendation_table: Final = Table(
     Column("created_at", DateTime(timezone=True), nullable=False),
 )
 
+interaction_table: Final = Table(
+    "interactions",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column("actor_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("candidate_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("action", Enum(InteractionType, name="interaction_type"), nullable=False),
+    Column("ml_recommendation_id", String, nullable=True),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("deleted_at", DateTime(timezone=True)),
+)
+
 audit_event_table: Final = Table(
     "audit_events",
     meta_data,
@@ -115,4 +129,5 @@ mapper_registry.map_imperatively(AuthIdentityRow, auth_identity_table)
 mapper_registry.map_imperatively(AccessTokenRow, access_token_table)
 mapper_registry.map_imperatively(NotificationDeviceRow, notification_device_table)
 mapper_registry.map_imperatively(RecommendationRow, recommendation_table)
+mapper_registry.map_imperatively(InteractionRow, interaction_table)
 mapper_registry.map_imperatively(AuditEventRow, audit_event_table)

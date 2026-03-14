@@ -13,6 +13,7 @@ class Interaction(Entity[InteractionId]):
     actor_user_id: UserId
     candidate_user_id: UserId
     action: InteractionType
+    ml_recommendation_id: str | None
 
     @classmethod
     def factory(
@@ -20,6 +21,7 @@ class Interaction(Entity[InteractionId]):
         actor_user_id: UserId,
         candidate_user_id: UserId,
         action: InteractionType,
+        ml_recommendation_id: str | None = None,
     ) -> Self:
         return cls(
             id=InteractionId(uuid7()),
@@ -27,4 +29,5 @@ class Interaction(Entity[InteractionId]):
             actor_user_id=actor_user_id,
             candidate_user_id=candidate_user_id,
             action=action,
+            ml_recommendation_id=ml_recommendation_id,
         )

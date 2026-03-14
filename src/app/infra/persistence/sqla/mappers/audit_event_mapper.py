@@ -24,12 +24,7 @@ class AuditEventMapper:
 
     @staticmethod
     def to_entity(row: AuditEventRow) -> AuditEvent:
-        if (
-            row.id is None
-            or row.event_type is None
-            or row.sent_to_ml is None
-            or row.created_at is None
-        ):
+        if row.id is None or row.event_type is None or row.sent_to_ml is None or row.created_at is None:
             msg = "AuditEventRow must have id, event_type, sent_to_ml, created_at"
             raise ValueError(msg)
         return AuditEvent(

@@ -20,4 +20,3 @@ class RecommendationResponse(BaseModel):
 
 class RecommendationsResponse(BaseModel):
     items: list[RecommendationResponse]
-

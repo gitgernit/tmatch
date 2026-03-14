@@ -38,4 +38,3 @@ class GetRecommendationsInteractor:
             await self.unit_of_work.add(recommendation)
         await self.unit_of_work.commit()
         return RecommendationsResult(items=items)
-
