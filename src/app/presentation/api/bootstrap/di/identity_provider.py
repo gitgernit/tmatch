@@ -1,5 +1,3 @@
-from typing import Any
-
 from dishka import BaseScope, Provider, Scope, provide
 from litestar import Request
 
@@ -16,7 +14,7 @@ class IdentityProviderProvider(Provider):
     @provide
     def identity_provider(
         self,
-        request: Request[Any, Any, Any],
+        request: Request,  # type: ignore[type-arg]
         user_data_gateway: UserDataGateway,
         access_token_data_gateway: AccessTokenDataGateway,
         access_token_cryptographer: AccessTokenCryptographer,
