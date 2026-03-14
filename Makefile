@@ -18,6 +18,10 @@ install: ## Install dependencies
 test: ## Runs pytest with coverage
 	uv run pytest --cov=./
 
+.PHONY: test-unit
+test-unit: ## Runs unit tests only
+	uv run pytest tests/unit
+
 .PHONY: test-fast
 test-fast: ## Runs pytest with exitfirst
 	uv run pytest --exitfirst
@@ -45,7 +49,7 @@ format: ## Formats all files
 check: format lint test ## Format and lint code then run tests
 
 .PHONY: ci
-ci: lint test ## Lint code then run tests
+ci: lint test-unit ## Lint code then run unit tests only
 
 .PHONY: api
 api: uv run api ## Run FastAPI server locally

@@ -26,8 +26,12 @@ build_image:
 
 test:
   stage: test
+  image: python:3.12-bookworm
+  before_script:
+    - pip install uv
+    - uv sync
   script:
-    - echo 'ok'
+    - make ci
 
 deploy:
   stage: deploy

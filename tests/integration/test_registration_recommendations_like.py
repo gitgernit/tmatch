@@ -2,7 +2,6 @@ from datetime import date
 from typing import cast
 from uuid import UUID
 
-import pytest
 from dishka import AsyncContainer
 
 from app.application.auth_identity.interactors.sign_up import SignUpInteractor
@@ -23,7 +22,6 @@ from app.domain.user.entity import UserId
 from tests.integration.di.identity_provider import MockIdentityProvider  # noqa: TC001
 
 
-@pytest.mark.asyncio
 async def test_registration_recommendations_like_flow(
     test_container: AsyncContainer,
     test_identity_provider: IdentityProvider,

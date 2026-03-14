@@ -1,4 +1,3 @@
-import pytest
 from dishka import AsyncContainer
 
 from app.application.auth_identity.interactors.sign_in import SignInInteractor
@@ -28,7 +27,6 @@ from app.application.recommendation.interactors.get_recommendations import (
 )
 
 
-@pytest.mark.asyncio
 async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     sign_up = await test_container.get(SignUpInteractor)
     sign_in = await test_container.get(SignInInteractor)
