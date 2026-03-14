@@ -20,7 +20,7 @@ from app.application.recommendation.interactors.get_recommendations import (
 from app.application.user.data_gateway import UserDataGateway
 from app.domain.interaction.value_objects import InteractionType
 from app.domain.user.entity import UserId
-from tests.integration.di.identity_provider import MockIdentityProvider
+from tests.integration.di.identity_provider import MockIdentityProvider  # noqa: TC001
 
 
 @pytest.mark.asyncio
@@ -29,7 +29,7 @@ async def test_registration_recommendations_like_flow(
     test_identity_provider: IdentityProvider,
     test_run_suffix: str,
 ) -> None:
-    id_provider = cast(MockIdentityProvider, test_identity_provider)
+    id_provider = cast("MockIdentityProvider", test_identity_provider)
     email1 = f"user1_{test_run_suffix}@test.local"
     email2 = f"user2_{test_run_suffix}@test.local"
     password = "test-password-123"  # noqa: S105
