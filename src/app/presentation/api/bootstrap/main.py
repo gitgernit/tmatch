@@ -19,6 +19,9 @@ from app.presentation.api.bootstrap.di.container import build_container
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
 from app.presentation.api.config.models import FirebaseConfig, OpentelemetryConfig, ServerConfig
 from app.presentation.api.routes.auth.router import router as auth_router
+from app.presentation.api.routes.dating_profile.router import (
+    router as dating_profile_router,
+)
 from app.presentation.api.routes.healthcheck.router import router as healthcheck_router
 from app.presentation.api.routes.interactions.router import router as interactions_router
 from app.presentation.api.routes.metrics.middleware import metrics_middleware
@@ -53,6 +56,7 @@ def create_app(
             healthcheck_router,
             auth_router,
             profile_router,
+            dating_profile_router,
             recommendations_router,
             interactions_router,
             metrics_router,

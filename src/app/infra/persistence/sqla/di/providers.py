@@ -7,12 +7,14 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
+from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
 from app.infra.persistence.sqla.mappers import GlobalDataMapper
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
 from app.infra.persistence.sqla.mappers.audit_event_mapper import AuditEventMapper
 from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
+from app.infra.persistence.sqla.mappers.dating_profile_mapper import DatingProfileMapper
 from app.infra.persistence.sqla.mappers.interaction_mapper import InteractionMapper
 from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
 from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
@@ -65,6 +67,7 @@ class MapperProvider(Provider):
     access_token_mapper = provide(AccessTokenMapper, scope=Scope.REQUEST)
     notification_device_mapper = provide(NotificationDeviceMapper, scope=Scope.REQUEST)
     recommendation_mapper = provide(RecommendationMapper, scope=Scope.REQUEST)
+    dating_profile_mapper = provide(DatingProfileMapper, scope=Scope.REQUEST)
     interaction_mapper = provide(InteractionMapper, scope=Scope.REQUEST)
     audit_event_mapper = provide(AuditEventMapper, scope=Scope.REQUEST)
     global_data_mapper = provide(GlobalDataMapper, scope=Scope.REQUEST)
@@ -78,6 +81,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultUserDataGateway],
         WithParents[DefaultAccessTokenDataGateway],
         WithParents[DefaultAuthIdentityDataGateway],
+        WithParents[DefaultDatingProfileDataGateway],
         WithParents[DefaultNotificationDeviceDataGateway],
     )
 

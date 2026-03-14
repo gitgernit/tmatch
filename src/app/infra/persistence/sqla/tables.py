@@ -6,7 +6,9 @@ from sqlalchemy import (
     Date,
     DateTime,
     Enum,
+    Float,
     ForeignKey,
+    Integer,
     MetaData,
     String,
     Table,
@@ -22,6 +24,9 @@ from app.infra.persistence.sqla.rows import (
     AccessTokenRow,
     AuditEventRow,
     AuthIdentityRow,
+    DatingProfilePhotoRow,
+    DatingProfileRow,
+    DatingProfileTraitRow,
     InteractionRow,
     NotificationDeviceRow,
     ProfileRow,
@@ -98,6 +103,44 @@ recommendation_table: Final = Table(
     Column("created_at", DateTime(timezone=True), nullable=False),
 )
 
+dating_profile_table: Final = Table(
+    "dating_profiles",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column("user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("deleted_at", DateTime(timezone=True)),
+)
+
+dating_profile_photo_table: Final = Table(
+    "dating_profile_photos",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column(
+        "dating_profile_id",
+        UUID,
+        ForeignKey("dating_profiles.id", ondelete="CASCADE"),
+        nullable=False,
+    ),
+    Column("url", String, nullable=False),
+    Column("position", Integer, nullable=False),
+)
+
+dating_profile_trait_table: Final = Table(
+    "dating_profile_traits",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column(
+        "dating_profile_id",
+        UUID,
+        ForeignKey("dating_profiles.id", ondelete="CASCADE"),
+        nullable=False,
+    ),
+    Column("trait_code", String, nullable=False),
+    Column("score", Float, nullable=False),
+    Column("is_hidden", Boolean, nullable=False),
+)
+
 interaction_table: Final = Table(
     "interactions",
     meta_data,
@@ -129,5 +172,8 @@ mapper_registry.map_imperatively(AuthIdentityRow, auth_identity_table)
 mapper_registry.map_imperatively(AccessTokenRow, access_token_table)
 mapper_registry.map_imperatively(NotificationDeviceRow, notification_device_table)
 mapper_registry.map_imperatively(RecommendationRow, recommendation_table)
+mapper_registry.map_imperatively(DatingProfileRow, dating_profile_table)
+mapper_registry.map_imperatively(DatingProfilePhotoRow, dating_profile_photo_table)
+mapper_registry.map_imperatively(DatingProfileTraitRow, dating_profile_trait_table)
 mapper_registry.map_imperatively(InteractionRow, interaction_table)
 mapper_registry.map_imperatively(AuditEventRow, audit_event_table)
