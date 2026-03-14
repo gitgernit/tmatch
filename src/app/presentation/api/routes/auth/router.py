@@ -22,8 +22,8 @@ from app.presentation.api.routes.auth.dto import (
 
 
 @post(
-    path="/sign-up/email",
-    summary="Sign up with email",
+    path="/registration/email",
+    summary="Register with email",
 )
 async def sign_up_email(
     data: EmailSignUpRequest,
@@ -41,8 +41,8 @@ async def sign_up_email(
 
 
 @post(
-    path="/sign-up/yandex",
-    summary="Sign up with Yandex",
+    path="/registration/yandex",
+    summary="Register with Yandex",
 )
 async def sign_up_yandex(
     data: YandexSignUpRequest,
@@ -60,8 +60,8 @@ async def sign_up_yandex(
 
 
 @post(
-    path="/sign-in/email",
-    summary="Sign in with email",
+    path="/signing/email",
+    summary="Sign in (email)",
 )
 async def sign_in_email(
     data: EmailSignInRequest,
@@ -84,8 +84,8 @@ async def sign_in_email(
 
 
 @post(
-    path="/sign-in/yandex",
-    summary="Sign in with Yandex",
+    path="/signing/yandex",
+    summary="Sign in (Yandex)",
 )
 async def sign_in_yandex(
     data: YandexSignInRequest,
