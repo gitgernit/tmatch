@@ -3,6 +3,7 @@
 
 stages:
   - build
+  - lint
   - test
   - deploy
 
@@ -24,6 +25,15 @@ build_image:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
+lint:
+  stage: lint
+  image: python:3.12-bookworm
+  before_script:
+    - pip install uv
+    - uv sync
+  script:
+    - make ci
+
 test:
   stage: test
   image: python:3.12-bookworm
@@ -31,7 +41,7 @@ test:
     - pip install uv
     - uv sync
   script:
-    - make ci
+    - make test-unit
 
 deploy:
   stage: deploy

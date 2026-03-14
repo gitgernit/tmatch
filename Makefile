@@ -49,7 +49,7 @@ format: ## Formats all files
 check: format lint test ## Format and lint code then run tests
 
 .PHONY: ci
-ci: lint test-unit ## Lint code then run unit tests only
+ci: lint ## Lint code (tests run separately)
 
 .PHONY: api
 api: uv run api ## Run FastAPI server locally
