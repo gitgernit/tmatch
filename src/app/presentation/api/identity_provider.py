@@ -1,4 +1,4 @@
-from typing import override
+from typing import Any, override
 
 from litestar import Request
 
@@ -17,7 +17,7 @@ BEARER_PREFIX = "Bearer "
 class LitestarIdentityProvider(IdentityProvider):
     def __init__(
         self,
-        request: Request,
+        request: Request[Any, Any, Any],
         user_data_gateway: UserDataGateway,
         access_token_data_gateway: AccessTokenDataGateway,
         access_token_cryptographer: AccessTokenCryptographer,

@@ -12,7 +12,8 @@ class FernetPasswordService(PasswordHasher, PasswordVerifier):
 
     @override
     def hash(self, password: str) -> str:
-        return self._fernet.encrypt(password.encode("utf-8")).decode("utf-8")
+        raw: bytes = self._fernet.encrypt(password.encode("utf-8"))
+        return raw.decode("utf-8")
 
     @override
     def verify(

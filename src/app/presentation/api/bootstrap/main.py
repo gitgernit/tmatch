@@ -1,12 +1,12 @@
 import asyncio
 import sys
 
-import firebase_admin  # type: ignore[import-untyped]
+import firebase_admin
 import uvicorn
 from dishka import AsyncContainer
 from dishka.integrations.litestar import setup_dishka
 from dotenv import load_dotenv
-from firebase_admin import credentials  # type: ignore[import-untyped]
+from firebase_admin import credentials
 from litestar import Litestar
 from litestar.contrib.opentelemetry import OpenTelemetryConfig, OpenTelemetryPlugin
 from litestar.openapi import OpenAPIConfig

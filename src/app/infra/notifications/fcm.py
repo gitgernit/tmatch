@@ -1,8 +1,8 @@
 import asyncio
 from typing import override
 
-from firebase_admin import messaging  # type: ignore[import-untyped]
-from firebase_admin.messaging import Message, Notification  # type: ignore[import-untyped]
+from firebase_admin import messaging
+from firebase_admin.messaging import Message, Notification
 
 from app.application.common.notifications.service import NotificationService
 
