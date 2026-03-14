@@ -28,8 +28,6 @@ class UploadDatingProfilePhotoInteractor:
         content_type: str,
     ) -> UploadDatingProfilePhotoResult:
         current_user = await self.identity_provider.get_current_user()
-        if current_user.profile is None:
-            raise ProfileRequiredError
 
         if not content:
             raise PhotoValidationError
