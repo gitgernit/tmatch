@@ -9,6 +9,11 @@ from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessT
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
+from app.infra.persistence.sqla.mappers import GlobalDataMapper
+from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
+from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
+from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
+from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
 from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
@@ -49,6 +54,16 @@ class SqlaProvider(Provider):
     )
 
 
+class MapperProvider(Provider):
+    scope: BaseScope | None = Scope.REQUEST
+
+    user_mapper = provide(UserMapper, scope=Scope.REQUEST)
+    auth_identity_mapper = provide(AuthIdentityMapper, scope=Scope.REQUEST)
+    access_token_mapper = provide(AccessTokenMapper, scope=Scope.REQUEST)
+    notification_device_mapper = provide(NotificationDeviceMapper, scope=Scope.REQUEST)
+    global_data_mapper = provide(GlobalDataMapper, scope=Scope.REQUEST)
+
+
 class DataGatewayProvider(Provider):
     scope: BaseScope | None = Scope.REQUEST
 
@@ -63,5 +78,6 @@ class DataGatewayProvider(Provider):
 
 providers = [
     SqlaProvider(),
+    MapperProvider(),
     DataGatewayProvider(),
 ]

@@ -1,0 +1,37 @@
+from typing import Any, cast
+
+from app.domain.common.entity import Entity
+from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
+from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
+from app.infra.persistence.sqla.mappers.errors import MapperNotFoundError
+from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
+from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
+
+_Mapper = UserMapper | AuthIdentityMapper | AccessTokenMapper | NotificationDeviceMapper
+
+
+class GlobalDataMapper:
+    def __init__(
+        self,
+        user_mapper: UserMapper,
+        auth_identity_mapper: AuthIdentityMapper,
+        access_token_mapper: AccessTokenMapper,
+        notification_device_mapper: NotificationDeviceMapper,
+    ) -> None:
+        mappers: list[_Mapper] = [
+            user_mapper,
+            auth_identity_mapper,
+            access_token_mapper,
+            notification_device_mapper,
+        ]
+        self._registry: dict[type[Entity[Any]], _Mapper] = {
+            m.entity_type: m for m in mappers
+        }
+
+    def to_rows(self, entity: Entity[Any]) -> list[Any]:
+        entity_type = type(entity)
+        mapper = self._registry.get(entity_type)
+        if mapper is None:
+            raise MapperNotFoundError(entity_type)
+        rows = mapper.to_rows(cast("Any", entity))
+        return list(rows)
