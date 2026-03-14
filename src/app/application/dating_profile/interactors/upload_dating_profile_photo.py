@@ -4,7 +4,6 @@ from app.application.dating_profile.dto import UploadDatingProfilePhotoResult
 from app.application.dating_profile.errors import (
     PhotoStorageUnavailableError,
     PhotoValidationError,
-    ProfileRequiredError,
 )
 from app.application.dating_profile.photo_storage import DatingPhotoStorage
 
