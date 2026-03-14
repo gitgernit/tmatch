@@ -45,3 +45,14 @@ class FirebaseConfig:
 class MlConfig:
     recommendation_provider: str
     base_url: str
+    photo_moderation_provider: str
+
+
+@dataclass(frozen=True)
+class S3Config:
+    endpoint_url: str
+    region: str
+    bucket: str
+    access_key_id: str
+    secret_access_key: str
+    public_base_url: str

@@ -8,3 +8,19 @@ class DatingProfileValidationError(Exception):
 
 class ProfileRequiredError(Exception):
     pass
+
+
+class PhotoValidationError(Exception):
+    pass
+
+
+class PhotoModerationRejectedError(Exception):
+    pass
+
+
+class PhotoModerationUnavailableError(Exception):
+    pass
+
+
+class PhotoStorageUnavailableError(Exception):
+    pass

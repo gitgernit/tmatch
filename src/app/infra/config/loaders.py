@@ -6,6 +6,7 @@ from app.infra.config.models import (
     MlConfigModel,
     OpentelemetryConfigModel,
     PostgresConfigModel,
+    S3ConfigModel,
     ServerConfigModel,
     YandexOAuthConfigModel,
 )
@@ -16,6 +17,7 @@ from app.presentation.api.config.models import (
     MlConfig,
     OpentelemetryConfig,
     PostgresConfig,
+    S3Config,
     ServerConfig,
     YandexOAuthConfig,
 )
@@ -82,7 +84,26 @@ class EnvFirebaseConfigLoader(BaseEnvLoader):
 
 class EnvMlConfigLoader(BaseEnvLoader):
     def load(self) -> MlConfig:
-        raw_data = self._source.get_present_values(["ML_RECOMMENDATION_PROVIDER", "ML_BASE_URL"])
+        raw_data = self._source.get_present_values(
+            ["ML_RECOMMENDATION_PROVIDER", "ML_BASE_URL", "ML_PHOTO_MODERATION_PROVIDER"]
+        )
         validated = MlConfigModel.model_validate(raw_data).model_dump()
 
         return retort.load(validated, MlConfig)
+
+
+class EnvS3ConfigLoader(BaseEnvLoader):
+    def load(self) -> S3Config:
+        raw_data = self._source.get_present_values(
+            [
+                "S3_ENDPOINT_URL",
+                "S3_REGION",
+                "S3_BUCKET",
+                "S3_ACCESS_KEY_ID",
+                "S3_SECRET_ACCESS_KEY",
+                "S3_PUBLIC_BASE_URL",
+            ]
+        )
+        validated = S3ConfigModel.model_validate(raw_data).model_dump()
+
+        return retort.load(validated, S3Config)

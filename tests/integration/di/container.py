@@ -13,6 +13,7 @@ from app.infra.notifications.di.providers import providers as notification_provi
 from app.infra.oauth.di.providers import providers as oauth_providers
 from app.infra.persistence.sqla.di.providers import providers as sqla_providers
 from app.infra.security.di.providers import providers as security_providers
+from app.infra.storage.di.providers import providers as storage_providers
 from tests.integration.di.identity_provider import MockIdentityProvider
 
 
@@ -31,6 +32,7 @@ def build_test_container() -> AsyncContainer:
         *security_providers,
         *oauth_providers,
         *ml_providers,
+        *storage_providers,
         *auth_identity_providers,
         *notification_providers,
         MockIdentityProviderProvider(),

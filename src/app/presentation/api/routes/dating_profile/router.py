@@ -1,16 +1,23 @@
+from typing import Any
+
 from dishka.integrations.litestar import DishkaRouter, FromDishka
-from litestar import get, patch, put
+from litestar import Request, get, patch, post, put
 from litestar.exceptions import HTTPException
 from litestar.status_codes import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
+    HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+    HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+    HTTP_503_SERVICE_UNAVAILABLE,
 )
 
 from app.application.auth_identity.errors import UserUnauthorizedError
 from app.application.dating_profile.errors import (
     DatingProfileNotFoundError,
     DatingProfileValidationError,
+    PhotoStorageUnavailableError,
+    PhotoValidationError,
     ProfileRequiredError,
 )
 from app.application.dating_profile.interactors.get_dating_profile import (
@@ -19,6 +26,10 @@ from app.application.dating_profile.interactors.get_dating_profile import (
 from app.application.dating_profile.interactors.set_trait_visibility import (
     SetTraitVisibilityInteractor,
 )
+from app.application.dating_profile.interactors.upload_dating_profile_photo import (
+    MAX_PHOTO_SIZE_BYTES,
+    UploadDatingProfilePhotoInteractor,
+)
 from app.application.dating_profile.interactors.upsert_dating_profile import (
     UpsertDatingProfileInteractor,
 )
@@ -26,6 +37,7 @@ from app.presentation.api.routes.dating_profile.dto import (
     DatingProfileResponse,
     SetTraitVisibilityRequest,
     TraitItemResponse,
+    UploadDatingPhotoResponse,
     UpsertDatingProfileRequest,
 )
 
@@ -133,8 +145,63 @@ async def set_trait_visibility(
         ) from error
 
 
+@post(
+    path="/me/photos",
+    summary="Upload dating profile photo",
+    security=[{"BearerToken": []}],
+)
+async def upload_dating_profile_photo(
+    request: Request[Any, Any, Any],
+    interactor: FromDishka[UploadDatingProfilePhotoInteractor],
+) -> UploadDatingPhotoResponse:
+    content_type = request.headers.get("content-type", "").split(";", maxsplit=1)[0].strip().lower()
+    if not content_type:
+        raise HTTPException(
+            status_code=HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Content-Type is required",
+        )
+
+    photo_bytes = await request.body()
+    try:
+        result = await interactor.execute(
+            content=photo_bytes,
+            content_type=content_type,
+        )
+    except UserUnauthorizedError as error:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized",
+        ) from error
+    except ProfileRequiredError as error:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Profile required to upload dating photo",
+        ) from error
+    except PhotoValidationError as error:
+        status_code = (
+            HTTP_413_REQUEST_ENTITY_TOO_LARGE
+            if len(photo_bytes) > MAX_PHOTO_SIZE_BYTES
+            else HTTP_415_UNSUPPORTED_MEDIA_TYPE
+        )
+        raise HTTPException(
+            status_code=status_code,
+            detail="Invalid photo payload",
+        ) from error
+    except PhotoStorageUnavailableError as error:
+        raise HTTPException(
+            status_code=HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Photo upload unavailable",
+        ) from error
+    return UploadDatingPhotoResponse(photo_url=result.photo_url)
+
+
 router = DishkaRouter(
     path="/dating-profile",
-    route_handlers=[get_dating_profile, upsert_dating_profile, set_trait_visibility],
+    route_handlers=[
+        get_dating_profile,
+        upsert_dating_profile,
+        upload_dating_profile_photo,
+        set_trait_visibility,
+    ],
     tags=["dating-profile"],
 )

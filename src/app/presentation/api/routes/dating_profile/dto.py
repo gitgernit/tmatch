@@ -23,3 +23,7 @@ class DatingProfileResponse(BaseModel):
 class SetTraitVisibilityRequest(BaseModel):
     trait_code: str = Field(..., min_length=1, max_length=64)
     is_hidden: bool = Field(...)
+
+
+class UploadDatingPhotoResponse(BaseModel):
+    photo_url: str

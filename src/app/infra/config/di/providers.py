@@ -6,6 +6,7 @@ from app.infra.config.loaders import (
     EnvMlConfigLoader,
     EnvOpentelemetryConfigLoader,
     EnvPostgresConfigLoader,
+    EnvS3ConfigLoader,
     EnvServerConfigLoader,
     EnvYandexOAuthConfigLoader,
 )
@@ -16,6 +17,7 @@ from app.presentation.api.config.models import (
     MlConfig,
     OpentelemetryConfig,
     PostgresConfig,
+    S3Config,
     ServerConfig,
     YandexOAuthConfig,
 )
@@ -40,6 +42,7 @@ class ConfigProvider(Provider):
         EnvOpentelemetryConfigLoader,
         EnvFirebaseConfigLoader,
         EnvMlConfigLoader,
+        EnvS3ConfigLoader,
     )
 
     @provide
@@ -68,6 +71,10 @@ class ConfigProvider(Provider):
 
     @provide
     def env_ml_config(self, loader: EnvMlConfigLoader) -> MlConfig:
+        return loader.load()
+
+    @provide
+    def env_s3_config(self, loader: EnvS3ConfigLoader) -> S3Config:
         return loader.load()
 
 

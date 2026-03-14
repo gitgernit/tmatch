@@ -42,3 +42,13 @@ class FirebaseConfigModel(BaseConfigModel):
 class MlConfigModel(BaseConfigModel):
     recommendation_provider: str = Field(default="mock", alias="ML_RECOMMENDATION_PROVIDER")
     base_url: str = Field(default="", alias="ML_BASE_URL")
+    photo_moderation_provider: str = Field(default="mock", alias="ML_PHOTO_MODERATION_PROVIDER")
+
+
+class S3ConfigModel(BaseConfigModel):
+    endpoint_url: str = Field(default="", alias="S3_ENDPOINT_URL")
+    region: str = Field(default="ru-central1", alias="S3_REGION")
+    bucket: str = Field(default="", alias="S3_BUCKET")
+    access_key_id: str = Field(default="", alias="S3_ACCESS_KEY_ID")
+    secret_access_key: str = Field(default="", alias="S3_SECRET_ACCESS_KEY")
+    public_base_url: str = Field(default="", alias="S3_PUBLIC_BASE_URL")
