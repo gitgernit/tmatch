@@ -21,6 +21,6 @@ class DefaultUnitOfWork(UnitOfWork):
     async def commit(self) -> None:
         for entity in self._pending:
             for row in self._data_mapper.to_rows(entity):
-                self._session.merge(row)
+                await self._session.merge(row)
         self._pending.clear()
         await self._session.commit()

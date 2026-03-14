@@ -10,6 +10,7 @@ from app.domain.user.entity import UserId
 
 @entity
 class Recommendation(Entity[RecommendationId]):
+    ml_recommendation_id: str
     user_id: UserId
     candidate_user_id: UserId
     score: float
@@ -19,6 +20,7 @@ class Recommendation(Entity[RecommendationId]):
     @classmethod
     def factory(
         cls,
+        ml_recommendation_id: str,
         user_id: UserId,
         candidate_user_id: UserId,
         score: float,
@@ -28,6 +30,7 @@ class Recommendation(Entity[RecommendationId]):
         return cls(
             id=RecommendationId(uuid7()),
             created_at=datetime.now(tz=UTC),
+            ml_recommendation_id=ml_recommendation_id,
             user_id=user_id,
             candidate_user_id=candidate_user_id,
             score=score,

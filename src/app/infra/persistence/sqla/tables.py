@@ -91,6 +91,7 @@ recommendation_table: Final = Table(
     "recommendations",
     meta_data,
     Column("id", UUID, primary_key=True),
+    Column("ml_recommendation_id", String, nullable=False),
     Column("user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
     Column("candidate_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
     Column("score", Float, nullable=False),

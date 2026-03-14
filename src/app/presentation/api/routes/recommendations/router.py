@@ -31,6 +31,7 @@ async def get_recommendations(
     return RecommendationsResponse(
         items=[
             {
+                "ml_recommendation_id": item.ml_recommendation_id,
                 "candidate_user_id": item.candidate_user_id,
                 "score": item.score,
                 "reason_type": item.reason_type,

@@ -12,6 +12,7 @@ class RecommendationMapper:
         return [
             RecommendationRow(
                 id_=recommendation.id,
+                ml_recommendation_id=recommendation.ml_recommendation_id,
                 user_id=recommendation.user_id,
                 candidate_user_id=recommendation.candidate_user_id,
                 score=recommendation.score,
@@ -25,16 +26,21 @@ class RecommendationMapper:
     def to_entity(row: RecommendationRow) -> Recommendation:
         if (
             row.id is None
+            or row.ml_recommendation_id is None
             or row.user_id is None
             or row.candidate_user_id is None
             or row.score is None
             or row.reason_type is None
             or row.created_at is None
         ):
-            msg = "RecommendationRow must have id, user_id, candidate_user_id, score, reason_type, created_at"
+            msg = (
+                "RecommendationRow must have id, ml_recommendation_id, user_id, "
+                "candidate_user_id, score, reason_type, created_at"
+            )
             raise ValueError(msg)
         return Recommendation(
             id=RecommendationId(row.id),
+            ml_recommendation_id=row.ml_recommendation_id,
             user_id=UserId(row.user_id),
             candidate_user_id=UserId(row.candidate_user_id),
             score=row.score,

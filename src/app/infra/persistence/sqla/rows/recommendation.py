@@ -7,6 +7,7 @@ from app.domain.recommendation.value_objects import CompatibilityType
 
 class RecommendationRow:
     id: UUID | None
+    ml_recommendation_id: str | None
     user_id: UUID | None
     candidate_user_id: UUID | None
     score: float | None
@@ -17,6 +18,7 @@ class RecommendationRow:
     def __init__(
         self,
         id_: UUID | None = None,
+        ml_recommendation_id: str | None = None,
         user_id: UUID | None = None,
         candidate_user_id: UUID | None = None,
         score: float | None = None,
@@ -25,6 +27,7 @@ class RecommendationRow:
         created_at: datetime | None = None,
     ) -> None:
         self.id = id_
+        self.ml_recommendation_id = ml_recommendation_id
         self.user_id = user_id
         self.candidate_user_id = candidate_user_id
         self.score = score

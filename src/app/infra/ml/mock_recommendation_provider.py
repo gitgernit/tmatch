@@ -23,6 +23,7 @@ class MockRecommendationProvider(RecommendationProvider):
             raise RecommendationProviderUnavailableError from error
         return [
             RecommendationItem(
+                ml_recommendation_id=f"mock-{user_id}-{i + 1}",
                 candidate_user_id=str(cid),
                 score=1.0 - (i * 0.01),
                 reason_type=CompatibilityType.LIFESTYLE,

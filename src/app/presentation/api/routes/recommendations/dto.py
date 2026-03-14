@@ -10,6 +10,7 @@ class RecommendationsQuery(BaseModel):
 
 
 class RecommendationResponse(BaseModel):
+    ml_recommendation_id: str
     candidate_user_id: str
     score: float
     reason_type: CompatibilityType
