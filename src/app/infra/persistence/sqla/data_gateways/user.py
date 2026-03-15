@@ -1,6 +1,6 @@
 from typing import override
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.user.data_gateway import UserDataGateway
@@ -37,6 +37,14 @@ class DefaultUserDataGateway(UserDataGateway):
         stmt = select(user_table.c.id).order_by(user_table.c.id)
         if exclude_user_id is not None:
             stmt = stmt.where(user_table.c.id != exclude_user_id)
+        result = await self._session.execute(stmt)
+        return [UserId(row[0]) for row in result.all()]
+
+    @override
+    async def list_random_user_ids(self, limit: int) -> list[UserId]:
+        if limit <= 0:
+            return []
+        stmt = select(user_table.c.id).order_by(func.random()).limit(limit)
         result = await self._session.execute(stmt)
         return [UserId(row[0]) for row in result.all()]
 

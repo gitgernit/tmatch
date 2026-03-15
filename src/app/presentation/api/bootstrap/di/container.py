@@ -6,6 +6,7 @@ from app.application.dating_profile.di.providers import providers as dating_prof
 from app.application.interaction.di.providers import providers as interaction_providers
 from app.application.match.di.providers import providers as match_providers
 from app.application.notification_device.di.providers import providers as notification_device_providers
+from app.application.preview.di.providers import providers as preview_providers
 from app.application.profile.di.providers import providers as profile_providers
 from app.application.recommendation.di.providers import providers as recommendation_providers
 from app.application.targeting.di.providers import providers as targeting_providers
@@ -35,6 +36,7 @@ def build_container() -> AsyncContainer:
         *profile_providers,
         *recommendation_providers,
         *match_providers,
+        *preview_providers,
         *targeting_providers,
         *dating_profile_providers,
         *interaction_providers,

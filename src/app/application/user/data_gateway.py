@@ -17,5 +17,9 @@ class UserDataGateway(Protocol):
         raise NotImplementedError
 
     @abstractmethod
+    async def list_random_user_ids(self, limit: int) -> list[UserId]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def load_many_with_ids(self, user_ids: list[UserId]) -> list[User]:
         raise NotImplementedError

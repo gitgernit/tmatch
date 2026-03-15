@@ -28,6 +28,7 @@ from app.presentation.api.routes.matches.router import router as matches_router
 from app.presentation.api.routes.metrics.middleware import metrics_middleware
 from app.presentation.api.routes.metrics.router import router as metrics_router
 from app.presentation.api.routes.notifications.router import router as notifications_router
+from app.presentation.api.routes.preview.router import router as preview_router
 from app.presentation.api.routes.profile.router import router as profile_router
 from app.presentation.api.routes.recommendations.router import router as recommendations_router
 from app.presentation.api.routes.targeting.router import router as targeting_router
@@ -61,6 +62,7 @@ def create_app(
             dating_profile_router,
             recommendations_router,
             matches_router,
+            preview_router,
             targeting_router,
             interactions_router,
             metrics_router,
