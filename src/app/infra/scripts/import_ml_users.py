@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import logging
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -40,7 +41,18 @@ logger = logging.getLogger(__name__)
 DEFAULT_REGION = "Moscow"
 DEFAULT_PROFILE_PHOTO_URL = "https://i.pinimg.com/736x/66/20/9e/66209e958f35bea74dc48b0e3c79595f.jpg"
 DEFAULT_PASSWORD = "password"  # noqa: S105
+EMAIL_DOMAIN = "example.com"
 AUTH_IDENTITY_NAMESPACE = UUID("f80fbbf2-efc6-4a09-866f-8367f8f51352")
+
+
+def _name_to_email_local(first_name: str, last_name: str | None) -> str:
+    """Build email local part from name, e.g. 'Nick', 'Fury' -> 'nick_fury'."""
+    parts = [first_name]
+    if last_name:
+        parts.append(last_name)
+    raw = "_".join(parts).lower()
+    sanitized = re.sub(r"[^a-z0-9_]+", "_", raw).strip("_")
+    return sanitized or "user"
 
 
 def _build_postgres_url() -> str:
@@ -173,8 +185,10 @@ def _insert_dating_photos_batch(engine: Engine, inserted_profiles: list[tuple[UU
 
 def _build_auth_identity_payload(user_id: UUID, password_hasher: FernetPasswordService) -> dict[str, object]:
     fake = _build_faker_for_user(user_id)
-    local_part = fake.user_name()
-    identifier = f"{local_part}+{user_id.hex[:12]}@example.com"
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    local_part = _name_to_email_local(first_name, last_name)
+    identifier = f"{local_part}@{EMAIL_DOMAIN}"
     return {
         "id": uuid5(AUTH_IDENTITY_NAMESPACE, f"email:{user_id}"),
         "user_id": user_id,
