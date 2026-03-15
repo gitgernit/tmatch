@@ -81,9 +81,7 @@ def _build_faker_for_user(user_id: UUID) -> Faker:
 
 def _calculate_age(birth_date: date) -> int:
     today = datetime.now(tz=UTC).date()
-    return today.year - birth_date.year - (
-        (today.month, today.day) < (birth_date.month, birth_date.day)
-    )
+    return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
 
 
 def _build_fake_profile_fields(user_id: UUID) -> tuple[str, str, date, Gender]:

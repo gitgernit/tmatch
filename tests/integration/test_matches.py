@@ -208,3 +208,135 @@ async def test_dislike_removes_match(
     id_provider.set_user(user_b)
     matches_after_b = await get_matches.execute()
     assert len(matches_after_b.items) == 0
+
+
+async def test_block_removes_match(
+    test_container: AsyncContainer,
+    test_identity_provider: IdentityProvider,
+    test_run_suffix: str,
+) -> None:
+    id_provider = cast("MockIdentityProvider", test_identity_provider)
+    user_a_id, user_b_id = await _setup_two_users_with_profiles_and_recommendations(
+        test_container, test_identity_provider, test_run_suffix
+    )
+    user_gateway = await test_container.get(UserDataGateway)
+    user_a = await user_gateway.load_with_id(user_a_id)
+    user_b = await user_gateway.load_with_id(user_b_id)
+    assert user_a is not None
+    assert user_b is not None
+
+    create_interaction = await test_container.get(CreateInteractionInteractor)
+    get_recs = await test_container.get(GetRecommendationsInteractor)
+    get_matches = await test_container.get(GetMyMatchesInteractor)
+
+    id_provider.set_user(user_a)
+    recs_a = await get_recs.execute()
+    rec_to_b = next((r for r in recs_a.items if r.candidate_user_id == str(user_b_id)), None)
+    assert rec_to_b is not None
+    await create_interaction.execute(
+        candidate_user_id=user_b_id,
+        action=InteractionType.LIKE,
+        ml_recommendation_id=rec_to_b.ml_recommendation_id,
+    )
+    id_provider.set_user(user_b)
+    recs_b = await get_recs.execute()
+    rec_to_a = next((r for r in recs_b.items if r.candidate_user_id == str(user_a_id)), None)
+    assert rec_to_a is not None
+    await create_interaction.execute(
+        candidate_user_id=user_a_id,
+        action=InteractionType.LIKE,
+        ml_recommendation_id=rec_to_a.ml_recommendation_id,
+    )
+
+    id_provider.set_user(user_a)
+    matches_before = await get_matches.execute()
+    assert len(matches_before.items) == 1
+
+    id_provider.set_user(user_a)
+    await create_interaction.execute(
+        candidate_user_id=user_b_id,
+        action=InteractionType.BLOCK,
+        ml_recommendation_id=None,
+    )
+
+    id_provider.set_user(user_a)
+    matches_after_a = await get_matches.execute()
+    assert len(matches_after_a.items) == 0
+    id_provider.set_user(user_b)
+    matches_after_b = await get_matches.execute()
+    assert len(matches_after_b.items) == 0
+
+
+async def test_blocked_user_excluded_from_recommendations(
+    test_container: AsyncContainer,
+    test_identity_provider: IdentityProvider,
+    test_run_suffix: str,
+) -> None:
+    id_provider = cast("MockIdentityProvider", test_identity_provider)
+    user_a_id, user_b_id = await _setup_two_users_with_profiles_and_recommendations(
+        test_container, test_identity_provider, test_run_suffix
+    )
+    user_gateway = await test_container.get(UserDataGateway)
+    user_a = await user_gateway.load_with_id(user_a_id)
+    user_b = await user_gateway.load_with_id(user_b_id)
+    assert user_a is not None
+    assert user_b is not None
+
+    create_interaction = await test_container.get(CreateInteractionInteractor)
+    get_recs = await test_container.get(GetRecommendationsInteractor)
+
+    id_provider.set_user(user_a)
+    await create_interaction.execute(
+        candidate_user_id=user_b_id,
+        action=InteractionType.BLOCK,
+        ml_recommendation_id=None,
+    )
+
+    id_provider.set_user(user_a)
+    recs_a = await get_recs.execute()
+    candidate_ids_a = [r.candidate_user_id for r in recs_a.items]
+    assert str(user_b_id) not in candidate_ids_a
+
+    id_provider.set_user(user_b)
+    recs_b = await get_recs.execute()
+    candidate_ids_b = [r.candidate_user_id for r in recs_b.items]
+    assert str(user_a_id) not in candidate_ids_b
+
+
+async def test_unblock_removes_block_state(
+    test_container: AsyncContainer,
+    test_identity_provider: IdentityProvider,
+    test_run_suffix: str,
+) -> None:
+    id_provider = cast("MockIdentityProvider", test_identity_provider)
+    user_a_id, user_b_id = await _setup_two_users_with_profiles_and_recommendations(
+        test_container, test_identity_provider, test_run_suffix
+    )
+    user_gateway = await test_container.get(UserDataGateway)
+    user_a = await user_gateway.load_with_id(user_a_id)
+    user_b = await user_gateway.load_with_id(user_b_id)
+    assert user_a is not None
+    assert user_b is not None
+
+    create_interaction = await test_container.get(CreateInteractionInteractor)
+    get_recs = await test_container.get(GetRecommendationsInteractor)
+
+    id_provider.set_user(user_a)
+    await create_interaction.execute(
+        candidate_user_id=user_b_id,
+        action=InteractionType.BLOCK,
+        ml_recommendation_id=None,
+    )
+    id_provider.set_user(user_a)
+    recs_after_block = await get_recs.execute()
+    assert str(user_b_id) not in [r.candidate_user_id for r in recs_after_block.items]
+
+    id_provider.set_user(user_a)
+    await create_interaction.execute(
+        candidate_user_id=user_b_id,
+        action=InteractionType.UNBLOCK,
+        ml_recommendation_id=None,
+    )
+    id_provider.set_user(user_a)
+    recs_after_unblock = await get_recs.execute()
+    assert str(user_b_id) in [r.candidate_user_id for r in recs_after_unblock.items]

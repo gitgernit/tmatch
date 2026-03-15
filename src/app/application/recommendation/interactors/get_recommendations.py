@@ -4,6 +4,7 @@ from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.dating_profile.data_gateway import DatingProfileDataGateway
+from app.application.interaction.blocked_pairs_gateway import BlockedPairsGateway
 from app.application.profile.errors import ProfileNotFoundError
 from app.application.recommendation.dto import (
     RecommendationCandidateCardItem,
@@ -26,6 +27,7 @@ class GetRecommendationsInteractor:
     identity_provider: IdentityProvider
     recommendation_provider: RecommendationProvider
     unit_of_work: UnitOfWork
+    blocked_pairs_gateway: BlockedPairsGateway
     dating_profile_data_gateway: DatingProfileDataGateway
     user_data_gateway: UserDataGateway
 
@@ -38,10 +40,13 @@ class GetRecommendationsInteractor:
             raise ProfileNotFoundError
 
         items = await self.recommendation_provider.get_recommendations(user_id=user.id)
+        blocked_user_ids = await self.blocked_pairs_gateway.list_blocked_user_ids(user.id)
         valid_items: list[tuple[RecommendationItem, UserId]] = []
         for item in items:
             candidate_user_id = _map_candidate_user_id(item.candidate_user_id)
             if candidate_user_id is None:
+                continue
+            if candidate_user_id in blocked_user_ids:
                 continue
             valid_items.append((item, candidate_user_id))
 

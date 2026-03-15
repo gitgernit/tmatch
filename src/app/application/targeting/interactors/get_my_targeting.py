@@ -23,8 +23,10 @@ class GetMyTargetingInteractor:
             region: str | None = None
             if user.profile is not None:
                 today = datetime.now(tz=UTC).date()
-                age = today.year - user.profile.birth_date.year - (
-                    (today.month, today.day) < (user.profile.birth_date.month, user.profile.birth_date.day)
+                age = (
+                    today.year
+                    - user.profile.birth_date.year
+                    - ((today.month, today.day) < (user.profile.birth_date.month, user.profile.birth_date.day))
                 )
                 region = user.profile.region
             rules = TargetingRules(

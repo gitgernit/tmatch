@@ -36,13 +36,14 @@ class CreateInteractionInteractor:
         candidate = await self.user_data_gateway.load_with_id(candidate_user_id)
         if candidate is None:
             raise CandidateNotFoundError
-        is_recommended = await self.recommendation_data_gateway.has_recommendation(
-            user_id=user.id,
-            candidate_user_id=candidate_user_id,
-            ml_recommendation_id=ml_recommendation_id,
-        )
-        if not is_recommended:
-            raise CandidateNotRecommendedError
+        if action in (InteractionType.LIKE, InteractionType.DISLIKE):
+            is_recommended = await self.recommendation_data_gateway.has_recommendation(
+                user_id=user.id,
+                candidate_user_id=candidate_user_id,
+                ml_recommendation_id=ml_recommendation_id,
+            )
+            if not is_recommended:
+                raise CandidateNotRecommendedError
         interaction = Interaction.factory(
             actor_user_id=user.id,
             candidate_user_id=candidate_user_id,

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
+from app.infra.persistence.sqla.data_gateways.blocked_pairs import DefaultBlockedPairsGateway
 from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
 from app.infra.persistence.sqla.data_gateways.match import DefaultMatchDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
@@ -91,6 +92,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultRecommendationDataGateway],
         WithParents[DefaultTargetingDataGateway],
         WithParents[DefaultMatchDataGateway],
+        WithParents[DefaultBlockedPairsGateway],
     )
 
 

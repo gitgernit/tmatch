@@ -57,8 +57,5 @@ class GetPreviewCardsInteractor:
             return PreviewCardsResult(cards=[])
         users = await self.user_data_gateway.load_many_with_ids(user_ids)
         dating_profiles = await self.dating_profile_data_gateway.load_many_by_user_ids(user_ids)
-        cards = [
-            _build_card(user, dating_profiles.get(user.id))
-            for user in users
-        ]
+        cards = [_build_card(user, dating_profiles.get(user.id)) for user in users]
         return PreviewCardsResult(cards=cards)

@@ -1,6 +1,7 @@
 from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
 from app.application.dating_profile.data_gateway import DatingProfileDataGateway
+from app.application.interaction.blocked_pairs_gateway import BlockedPairsGateway
 from app.application.match.data_gateway import MatchDataGateway
 from app.application.match.dto import MatchesResult, MatchItem
 from app.application.recommendation.dto import (
@@ -53,12 +54,15 @@ def _build_candidate_card(
 class GetMyMatchesInteractor:
     identity_provider: IdentityProvider
     match_data_gateway: MatchDataGateway
+    blocked_pairs_gateway: BlockedPairsGateway
     user_data_gateway: UserDataGateway
     dating_profile_data_gateway: DatingProfileDataGateway
 
     async def execute(self) -> MatchesResult:
         user = await self.identity_provider.get_current_user()
         match_user_ids = await self.match_data_gateway.list_active_match_user_ids(user.id)
+        blocked_user_ids = await self.blocked_pairs_gateway.list_blocked_user_ids(user.id)
+        match_user_ids = [uid for uid in match_user_ids if uid not in blocked_user_ids]
         if not match_user_ids:
             return MatchesResult(items=[])
 
