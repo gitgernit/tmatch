@@ -65,6 +65,7 @@ deploy:
       "cd /home/ubuntu/app &&
        git pull &&
        docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" \"$CI_REGISTRY\" &&
+       docker network inspect app_shared_net >/dev/null 2>&1 || docker network create app_shared_net &&
        API_IMAGE=\"$CI_REGISTRY_IMAGE/api:latest\" docker compose -f docker-compose.deploy.yaml pull &&
        API_IMAGE=\"$CI_REGISTRY_IMAGE/api:latest\" docker compose -f docker-compose.deploy.yaml down &&
        API_IMAGE=\"$CI_REGISTRY_IMAGE/api:latest\" docker compose -f docker-compose.deploy.yaml up -d"
