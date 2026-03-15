@@ -7,7 +7,7 @@ class RecommendationRow:
     ml_recommendation_id: str | None
     user_id: UUID | None
     candidate_user_id: UUID | None
-    reasons: list[dict[str, float | str]] | None
+    reasons: dict[str, float] | None
     created_at: datetime | None
 
     def __init__(
@@ -16,7 +16,7 @@ class RecommendationRow:
         ml_recommendation_id: str | None = None,
         user_id: UUID | None = None,
         candidate_user_id: UUID | None = None,
-        reasons: list[dict[str, float | str]] | None = None,
+        reasons: dict[str, float] | None = None,
         created_at: datetime | None = None,
     ) -> None:
         self.id = id_

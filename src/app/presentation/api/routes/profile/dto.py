@@ -18,3 +18,20 @@ class ProfileResponse(BaseModel):
     birth_date: date
     region: str | None
     avatar_url: str | None
+
+
+class CardDatingTraitResponse(BaseModel):
+    trait_code: str
+    score: float
+    is_hidden: bool
+
+
+class CardDatingProfileResponse(BaseModel):
+    photos: list[str]
+    traits: list[CardDatingTraitResponse]
+
+
+class SelfCardResponse(BaseModel):
+    user_id: str
+    profile: ProfileResponse | None
+    dating_profile: CardDatingProfileResponse | None

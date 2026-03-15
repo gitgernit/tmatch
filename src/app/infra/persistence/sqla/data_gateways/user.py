@@ -32,11 +32,40 @@ class DefaultUserDataGateway(UserDataGateway):
     @override
     async def list_user_ids(
         self,
-        limit: int,
         exclude_user_id: UserId | None = None,
     ) -> list[UserId]:
-        stmt = select(user_table.c.id).order_by(user_table.c.id).limit(limit)
+        stmt = select(user_table.c.id).order_by(user_table.c.id)
         if exclude_user_id is not None:
             stmt = stmt.where(user_table.c.id != exclude_user_id)
         result = await self._session.execute(stmt)
         return [UserId(row[0]) for row in result.all()]
+
+    @override
+    async def load_many_with_ids(self, user_ids: list[UserId]) -> list[User]:
+        if not user_ids:
+            return []
+
+        user_rows_result = await self._session.execute(
+            select(UserRow).where(user_table.c.id.in_(user_ids)),
+        )
+        user_rows = list(user_rows_result.scalars().all())
+        if not user_rows:
+            return []
+
+        profile_rows_result = await self._session.execute(
+            select(ProfileRow).where(profile_table.c.user_id.in_(user_ids)),
+        )
+        profile_rows = list(profile_rows_result.scalars().all())
+        profile_by_user_id = {
+            UserId(profile_row.user_id): profile_row for profile_row in profile_rows if profile_row.user_id
+        }
+
+        user_by_id = {UserId(user_row.id): user_row for user_row in user_rows if user_row.id}
+        return [
+            self._user_mapper.to_entity(
+                user_row,
+                profile_by_user_id.get(user_id),
+            )
+            for user_id in user_ids
+            if (user_row := user_by_id.get(user_id)) is not None
+        ]

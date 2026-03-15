@@ -33,4 +33,4 @@ async def test_get_recommendations_without_ready_dating_profile_raises(
 
     get_recs = await test_container.get(GetRecommendationsInteractor)
     with pytest.raises(ProfileNotFoundError):
-        await get_recs.execute(limit=1)
+        await get_recs.execute()

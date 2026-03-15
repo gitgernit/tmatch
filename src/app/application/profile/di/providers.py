@@ -1,6 +1,7 @@
 from dishka import BaseScope, Provider, Scope, WithParents, provide_all
 
 from app.application.profile.interactors.get_profile import GetProfileInteractor
+from app.application.profile.interactors.get_self_card import GetSelfCardInteractor
 from app.application.profile.interactors.upsert_profile import UpsertProfileInteractor
 
 
@@ -9,6 +10,7 @@ class ProfileInteractorProvider(Provider):
 
     provides = provide_all(
         WithParents[GetProfileInteractor],
+        WithParents[GetSelfCardInteractor],
         WithParents[UpsertProfileInteractor],
     )
 

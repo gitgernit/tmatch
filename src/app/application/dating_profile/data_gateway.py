@@ -12,6 +12,10 @@ class DatingProfileDataGateway(Protocol):
         raise NotImplementedError
 
     @abstractmethod
+    async def load_many_by_user_ids(self, user_ids: list[UserId]) -> dict[UserId, DatingProfile]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def delete_photos_by_dating_profile_id(
         self,
         dating_profile_id: DatingProfileId,

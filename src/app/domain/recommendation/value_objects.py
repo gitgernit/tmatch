@@ -7,11 +7,11 @@ from app.domain.common.value_object import value_object
 RecommendationId = NewType("RecommendationId", UUID)
 
 
-class CompatibilityType(StrEnum):
+class RecommendationFeatureName(StrEnum):
     LIFESTYLE = "lifestyle"
 
 
 @value_object
 class RecommendationReason:
+    feature_name: RecommendationFeatureName
     score: float
-    reason_type: CompatibilityType

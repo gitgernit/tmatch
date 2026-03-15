@@ -1,21 +1,41 @@
-from pydantic import BaseModel, Field
+from datetime import date
 
-from app.domain.recommendation.value_objects import CompatibilityType
+from pydantic import BaseModel
 
-
-class RecommendationsQuery(BaseModel):
-    limit: int = Field(default=20, ge=1, le=100)
+from app.domain.recommendation.value_objects import RecommendationFeatureName
 
 
-class RecommendationReasonResponse(BaseModel):
+class RecommendationCandidateProfileResponse(BaseModel):
+    first_name: str
+    last_name: str | None
+    birth_date: date
+    region: str | None
+    avatar_url: str | None
+
+
+class RecommendationCandidateDatingTraitResponse(BaseModel):
+    trait_code: str
     score: float
-    reason_type: CompatibilityType
+    is_hidden: bool
+
+
+class RecommendationCandidateDatingProfileResponse(BaseModel):
+    photos: list[str]
+    traits: list[RecommendationCandidateDatingTraitResponse]
+
+
+class RecommendationCandidateCardResponse(BaseModel):
+    user_id: str
+    profile: RecommendationCandidateProfileResponse | None
+    dating_profile: RecommendationCandidateDatingProfileResponse | None
 
 
 class RecommendationResponse(BaseModel):
     ml_recommendation_id: str
+    user_id: str
     candidate_user_id: str
-    reasons: list[RecommendationReasonResponse]
+    reasons: dict[RecommendationFeatureName, float]
+    candidate_card: RecommendationCandidateCardResponse | None
 
 
 class RecommendationsResponse(BaseModel):

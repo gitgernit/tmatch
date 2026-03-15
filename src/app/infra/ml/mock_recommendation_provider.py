@@ -1,10 +1,10 @@
 from typing import override
 
-from app.application.recommendation.dto import RecommendationItem, RecommendationReasonItem
+from app.application.recommendation.dto import RecommendationItem
 from app.application.recommendation.errors import RecommendationProviderUnavailableError
 from app.application.recommendation.protocol import RecommendationProvider
 from app.application.user.data_gateway import UserDataGateway
-from app.domain.recommendation.value_objects import CompatibilityType
+from app.domain.recommendation.value_objects import RecommendationFeatureName
 from app.domain.user.entity import UserId
 
 
@@ -13,10 +13,9 @@ class MockRecommendationProvider(RecommendationProvider):
         self._user_gateway = user_gateway
 
     @override
-    async def get_recommendations(self, *, user_id: UserId, limit: int) -> list[RecommendationItem]:
+    async def get_recommendations(self, *, user_id: UserId) -> list[RecommendationItem]:
         try:
             candidate_ids = await self._user_gateway.list_user_ids(
-                limit=limit,
                 exclude_user_id=user_id,
             )
         except Exception as error:
@@ -24,13 +23,9 @@ class MockRecommendationProvider(RecommendationProvider):
         return [
             RecommendationItem(
                 ml_recommendation_id=f"mock-{user_id}-{i + 1}",
+                user_id=str(user_id),
                 candidate_user_id=str(cid),
-                reasons=[
-                    RecommendationReasonItem(
-                        score=1.0 - (i * 0.01),
-                        reason_type=CompatibilityType.LIFESTYLE,
-                    ),
-                ],
+                reasons={RecommendationFeatureName.LIFESTYLE: 1.0 - (i * 0.01)},
             )
             for i, cid in enumerate(candidate_ids)
         ]

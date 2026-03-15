@@ -12,6 +12,7 @@ from app.application.dating_profile.interactors.upsert_dating_profile import (
 from app.application.interaction.interactors.create_interaction import (
     CreateInteractionInteractor,
 )
+from app.application.profile.interactors.get_self_card import GetSelfCardInteractor
 from app.application.profile.interactors.upsert_profile import UpsertProfileInteractor
 from app.application.recommendation.interactors.get_recommendations import (
     GetRecommendationsInteractor,
@@ -58,13 +59,22 @@ async def test_registration_recommendations_like_flow(
 
     upsert_dating = await test_container.get(UpsertDatingProfileInteractor)
     await upsert_dating.execute(photos=["https://example.com/photo1.jpg"])
+    get_self_card = await test_container.get(GetSelfCardInteractor)
+    self_card = await get_self_card.execute()
+    assert self_card.user_id == str(user_a.id)
+    assert self_card.profile is not None
+    assert self_card.dating_profile is not None
 
     get_recs = await test_container.get(GetRecommendationsInteractor)
-    recs = await get_recs.execute(limit=1)
+    recs = await get_recs.execute()
     assert len(recs.items) >= 1
     item = recs.items[0]
+    assert item.user_id == str(user_a.id)
     assert item.candidate_user_id
     assert item.ml_recommendation_id
+    assert item.reasons
+    assert item.candidate_card is not None
+    assert item.candidate_card.user_id == item.candidate_user_id
 
     create_interaction = await test_container.get(CreateInteractionInteractor)
     result = await create_interaction.execute(
