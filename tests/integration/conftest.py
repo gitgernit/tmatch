@@ -12,6 +12,7 @@ from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceB
 from tests.integration.di.container import build_http_ml_test_container, build_test_container
 
 load_dotenv(override=False)
+load_dotenv(".env.local", override=False)
 
 
 @pytest.fixture(scope="session")
@@ -45,8 +46,9 @@ async def test_identity_provider(test_container: AsyncContainer) -> IdentityProv
 
 @pytest.fixture
 async def ml_http_container(bootstrap_db: None) -> AsyncGenerator[AsyncContainer, None]:  # noqa: ARG001
+    base_url = getenv("ML_TEST_BASE_URL") or getenv("ML_BASE_URL") or "http://127.0.0.1:8080"
     container = build_http_ml_test_container(
-        base_url=getenv("ML_TEST_BASE_URL", "http://127.0.0.1:8080"),
+        base_url=base_url,
     )
     async with container() as request_scope:
         yield request_scope

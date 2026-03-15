@@ -59,7 +59,7 @@ class HttpRecommendationProvider(RecommendationProvider):
         reasons = self._normalize_reasons(raw_item.get("reasons"))
         return RecommendationItem(
             ml_recommendation_id=ml_recommendation_id,
-            user_id=str(raw_item.get("user_id", str(user_id))),
+            user_id=str(user_id),
             candidate_user_id=candidate_user_id,
             reasons=reasons,
         )

@@ -20,6 +20,7 @@ dependencies = [
     "uuid-utils>=0.14.1",
     "greenlet>=3.3.1",
     "aioboto3>=13.0.0",
+    "faker>=40.8.0",
 ]
 
 [dependency-groups]
@@ -45,6 +46,7 @@ dev = [
 
 [project.scripts]
 api = "app.presentation.api.bootstrap.main:sync_entrypoint"
+import-ml-users = "app.infra.scripts.import_ml_users:main"
 
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]

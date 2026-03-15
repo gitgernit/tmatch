@@ -5,7 +5,10 @@ from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, H
 
 from app.application.auth_identity.errors import UserUnauthorizedError
 from app.application.profile.errors import ProfileNotFoundError
-from app.application.recommendation.errors import RecommendationProviderUnavailableError
+from app.application.recommendation.errors import (
+    RecommendationCandidatesNotFoundError,
+    RecommendationProviderUnavailableError,
+)
 from app.application.recommendation.interactors.get_recommendations import GetRecommendationsInteractor
 from app.presentation.api.routes.recommendations.dto import RecommendationsResponse
 
@@ -24,6 +27,8 @@ async def get_recommendations(
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized") from error
     except ProfileNotFoundError as error:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Profile not set yet") from error
+    except RecommendationCandidatesNotFoundError as error:
+        raise HTTPException(status_code=HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)) from error
     except RecommendationProviderUnavailableError as error:
         raise HTTPException(status_code=HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)) from error
 

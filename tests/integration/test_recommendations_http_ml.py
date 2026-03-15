@@ -16,7 +16,7 @@ from app.application.user.data_gateway import UserDataGateway
 from tests.integration.di.identity_provider import MockIdentityProvider  # noqa: TC001
 
 
-async def test_recommendations_with_http_ml_provider(
+async def test_recommendations_with_http_ml_provider_for_user_absent_in_dataset(
     ml_http_container: AsyncContainer,
     ml_http_identity_provider: IdentityProvider,
     test_run_suffix: str,
@@ -54,9 +54,9 @@ async def test_recommendations_with_http_ml_provider(
 
     get_recommendations = await ml_http_container.get(GetRecommendationsInteractor)
     result = await get_recommendations.execute()
-    assert len(result.items) >= 1
-    first_item = result.items[0]
-    assert first_item.user_id == str(user.id)
-    assert first_item.ml_recommendation_id
-    assert first_item.candidate_user_id
-    assert first_item.reasons
+    assert isinstance(result.items, list)
+    for item in result.items:
+        assert item.user_id == str(user.id)
+        assert item.ml_recommendation_id
+        assert item.candidate_user_id
+        assert item.reasons

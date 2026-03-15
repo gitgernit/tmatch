@@ -8,10 +8,11 @@ from app.application.notification_device.di.providers import providers as notifi
 from app.application.profile.di.providers import providers as profile_providers
 from app.application.recommendation.di.providers import providers as recommendation_providers
 from app.application.recommendation.protocol import RecommendationProvider
+from app.application.user.data_gateway import UserDataGateway
 from app.infra.config.di.providers import providers as config_providers
 from app.infra.ml.di.providers import PhotoModerationProviderInfraProvider
-from app.infra.ml.di.providers import providers as ml_providers
 from app.infra.ml.http_recommendation_provider import HttpRecommendationProvider
+from app.infra.ml.mock_recommendation_provider import MockRecommendationProvider
 from app.infra.notifications.di.providers import providers as notification_providers
 from app.infra.oauth.di.providers import providers as oauth_providers
 from app.infra.persistence.sqla.di.providers import providers as sqla_providers
@@ -40,13 +41,22 @@ class HttpRecommendationProviderForTests(Provider):
         return HttpRecommendationProvider(base_url=self._base_url)
 
 
+class MockRecommendationProviderForTests(Provider):
+    scope: BaseScope | None = Scope.REQUEST
+
+    @provide(scope=Scope.REQUEST)
+    def recommendation_provider(self, user_gateway: UserDataGateway) -> RecommendationProvider:
+        return MockRecommendationProvider(user_gateway=user_gateway)
+
+
 def build_test_container() -> AsyncContainer:
     return make_async_container(
         *config_providers,
         *sqla_providers,
         *security_providers,
         *oauth_providers,
-        *ml_providers,
+        PhotoModerationProviderInfraProvider(),
+        MockRecommendationProviderForTests(),
         *storage_providers,
         *auth_identity_providers,
         *notification_providers,
