@@ -4,3 +4,7 @@ class CandidateNotFoundError(Exception):
 
 class SelfInteractionError(Exception):
     pass
+
+
+class CandidateNotRecommendedError(Exception):
+    pass

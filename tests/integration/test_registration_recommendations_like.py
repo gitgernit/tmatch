@@ -13,6 +13,7 @@ from app.application.interaction.interactors.create_interaction import (
     CreateInteractionInteractor,
 )
 from app.application.profile.interactors.get_self_card import GetSelfCardInteractor
+from app.application.profile.interactors.get_user_card import GetUserCardInteractor
 from app.application.profile.interactors.upsert_profile import UpsertProfileInteractor
 from app.application.recommendation.interactors.get_recommendations import (
     GetRecommendationsInteractor,
@@ -75,6 +76,10 @@ async def test_registration_recommendations_like_flow(
     assert item.reasons
     assert item.candidate_card is not None
     assert item.candidate_card.user_id == item.candidate_user_id
+
+    get_user_card = await test_container.get(GetUserCardInteractor)
+    candidate_card = await get_user_card.execute(user_id=UserId(UUID(item.candidate_user_id)))
+    assert candidate_card.user_id == item.candidate_user_id
 
     create_interaction = await test_container.get(CreateInteractionInteractor)
     result = await create_interaction.execute(

@@ -2,7 +2,12 @@ from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.interaction.dto import InteractionResult
-from app.application.interaction.errors import CandidateNotFoundError, SelfInteractionError
+from app.application.interaction.errors import (
+    CandidateNotFoundError,
+    CandidateNotRecommendedError,
+    SelfInteractionError,
+)
+from app.application.recommendation.data_gateway import RecommendationDataGateway
 from app.application.user.data_gateway import UserDataGateway
 from app.domain.audit_event.entity import AuditEvent
 from app.domain.audit_event.value_objects import AuditEventType
@@ -16,6 +21,7 @@ class CreateInteractionInteractor:
     identity_provider: IdentityProvider
     unit_of_work: UnitOfWork
     user_data_gateway: UserDataGateway
+    recommendation_data_gateway: RecommendationDataGateway
 
     async def execute(
         self,
@@ -30,6 +36,13 @@ class CreateInteractionInteractor:
         candidate = await self.user_data_gateway.load_with_id(candidate_user_id)
         if candidate is None:
             raise CandidateNotFoundError
+        is_recommended = await self.recommendation_data_gateway.has_recommendation(
+            user_id=user.id,
+            candidate_user_id=candidate_user_id,
+            ml_recommendation_id=ml_recommendation_id,
+        )
+        if not is_recommended:
+            raise CandidateNotRecommendedError
         interaction = Interaction.factory(
             actor_user_id=user.id,
             candidate_user_id=candidate_user_id,

@@ -4,7 +4,11 @@ from litestar.exceptions import HTTPException
 from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 
 from app.application.auth_identity.errors import UserUnauthorizedError
-from app.application.interaction.errors import CandidateNotFoundError, SelfInteractionError
+from app.application.interaction.errors import (
+    CandidateNotFoundError,
+    CandidateNotRecommendedError,
+    SelfInteractionError,
+)
 from app.application.interaction.interactors.create_interaction import CreateInteractionInteractor
 from app.domain.interaction.value_objects import InteractionType
 from app.domain.user.entity import UserId
@@ -38,6 +42,11 @@ async def create_interaction(
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
             detail="Candidate not found",
+        ) from error
+    except CandidateNotRecommendedError as error:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Candidate was not recommended for current user",
         ) from error
 
     return InteractionResponse(

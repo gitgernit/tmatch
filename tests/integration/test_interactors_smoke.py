@@ -22,6 +22,7 @@ from app.application.notification_device.interactors.send_notification import (
 )
 from app.application.profile.interactors.get_profile import GetProfileInteractor
 from app.application.profile.interactors.get_self_card import GetSelfCardInteractor
+from app.application.profile.interactors.get_user_card import GetUserCardInteractor
 from app.application.profile.interactors.upsert_profile import UpsertProfileInteractor
 from app.application.recommendation.interactors.get_recommendations import (
     GetRecommendationsInteractor,
@@ -33,6 +34,7 @@ async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     sign_in = await test_container.get(SignInInteractor)
     get_profile = await test_container.get(GetProfileInteractor)
     get_self_card = await test_container.get(GetSelfCardInteractor)
+    get_user_card = await test_container.get(GetUserCardInteractor)
     upsert_profile = await test_container.get(UpsertProfileInteractor)
     get_dating_profile = await test_container.get(GetDatingProfileInteractor)
     upsert_dating_profile = await test_container.get(UpsertDatingProfileInteractor)
@@ -46,6 +48,7 @@ async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     assert sign_in is not None
     assert get_profile is not None
     assert get_self_card is not None
+    assert get_user_card is not None
     assert upsert_profile is not None
     assert get_dating_profile is not None
     assert upsert_dating_profile is not None
