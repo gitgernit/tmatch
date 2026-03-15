@@ -18,8 +18,8 @@ from sqlalchemy.dialects.postgresql import insert
 from app.domain.auth_identity.value_objects import AuthMethod
 from app.infra.config.loaders import EnvAccessTokenConfigLoader, EnvPostgresConfigLoader
 from app.infra.config.sources import EnvSource
-from app.infra.persistence.sqla.tables import auth_identity_table
 from app.infra.persistence.sqla.tables import (
+    auth_identity_table,
     dating_profile_photo_table,
     dating_profile_table,
     profile_table,
@@ -38,7 +38,7 @@ MAX_USERS_TO_LOAD = 1_000_000
 logger = logging.getLogger(__name__)
 DEFAULT_REGION = "Moscow"
 DEFAULT_PROFILE_PHOTO_URL = "https://i.pinimg.com/736x/66/20/9e/66209e958f35bea74dc48b0e3c79595f.jpg"
-DEFAULT_PASSWORD = "password"
+DEFAULT_PASSWORD = "password"  # noqa: S105
 AUTH_IDENTITY_NAMESPACE = UUID("f80fbbf2-efc6-4a09-866f-8367f8f51352")
 
 
