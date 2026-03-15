@@ -41,8 +41,7 @@ class DefaultMatchDataGateway(MatchDataGateway):
             .select_from(
                 l1.join(
                     l2,
-                    (l2.c.actor_user_id == l1.c.candidate_user_id)
-                    & (l2.c.candidate_user_id == l1.c.actor_user_id),
+                    (l2.c.actor_user_id == l1.c.candidate_user_id) & (l2.c.candidate_user_id == l1.c.actor_user_id),
                 ),
             )
             .where(l1.c.actor_user_id == user_id)

@@ -2,8 +2,6 @@ from datetime import date
 
 from pydantic import BaseModel
 
-from app.domain.recommendation.value_objects import RecommendationFeatureName
-
 
 class RecommendationCandidateProfileResponse(BaseModel):
     first_name: str
@@ -34,7 +32,7 @@ class RecommendationResponse(BaseModel):
     ml_recommendation_id: str
     user_id: str
     candidate_user_id: str
-    reasons: dict[RecommendationFeatureName, float]
+    reasons: dict[str, float]
     candidate_card: RecommendationCandidateCardResponse | None
 
 

@@ -1,7 +1,6 @@
 from datetime import date
 
 from app.application.common.dto import dto
-from app.domain.recommendation.value_objects import RecommendationFeatureName
 from app.domain.user.value_objects import Gender
 
 
@@ -10,7 +9,7 @@ class RecommendationItem:
     ml_recommendation_id: str
     user_id: str
     candidate_user_id: str
-    reasons: dict[RecommendationFeatureName, float]
+    reasons: dict[str, float]
     candidate_card: "RecommendationCandidateCardItem | None" = None
 
 

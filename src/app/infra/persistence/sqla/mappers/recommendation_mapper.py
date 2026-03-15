@@ -1,9 +1,5 @@
 from app.domain.recommendation.entity import Recommendation
-from app.domain.recommendation.value_objects import (
-    RecommendationFeatureName,
-    RecommendationId,
-    RecommendationReason,
-)
+from app.domain.recommendation.value_objects import RecommendationId, RecommendationReason
 from app.domain.user.entity import UserId
 from app.infra.persistence.sqla.rows import RecommendationRow
 
@@ -19,7 +15,7 @@ class RecommendationMapper:
                 ml_recommendation_id=recommendation.ml_recommendation_id,
                 user_id=recommendation.user_id,
                 candidate_user_id=recommendation.candidate_user_id,
-                reasons={reason.feature_name.value: reason.score for reason in recommendation.reasons},
+                reasons={reason.feature_name: reason.score for reason in recommendation.reasons},
                 created_at=recommendation.created_at,
             ),
         ]
@@ -45,7 +41,7 @@ class RecommendationMapper:
             candidate_user_id=UserId(row.candidate_user_id),
             reasons=[
                 RecommendationReason(
-                    feature_name=RecommendationFeatureName(str(feature_name)),
+                    feature_name=str(feature_name),
                     score=float(score),
                 )
                 for feature_name, score in row.reasons.items()
