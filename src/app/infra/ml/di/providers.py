@@ -4,6 +4,7 @@ from app.application.dating_profile.photo_moderation import PhotoModerationServi
 from app.application.recommendation.protocol import RecommendationProvider
 from app.application.user.data_gateway import UserDataGateway
 from app.infra.ml.http_photo_moderation_service import HttpPhotoModerationService
+from app.infra.ml.http_recommendation_provider import HttpRecommendationProvider
 from app.infra.ml.mock_photo_moderation_service import MockPhotoModerationService
 from app.infra.ml.mock_recommendation_provider import MockRecommendationProvider
 from app.presentation.api.config.models import MlConfig
@@ -20,6 +21,8 @@ class RecommendationProviderInfraProvider(Provider):
     ) -> RecommendationProvider:
         if config.recommendation_provider == "mock":
             return MockRecommendationProvider(user_gateway=user_gateway)
+        if config.recommendation_provider == "http":
+            return HttpRecommendationProvider(base_url=config.base_url)
         msg = f"Unknown ML recommendation provider: {config.recommendation_provider!r}"
         raise ValueError(msg)
 

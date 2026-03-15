@@ -7,8 +7,11 @@ from app.application.interaction.di.providers import providers as interaction_pr
 from app.application.notification_device.di.providers import providers as notification_device_providers
 from app.application.profile.di.providers import providers as profile_providers
 from app.application.recommendation.di.providers import providers as recommendation_providers
+from app.application.recommendation.protocol import RecommendationProvider
 from app.infra.config.di.providers import providers as config_providers
+from app.infra.ml.di.providers import PhotoModerationProviderInfraProvider
 from app.infra.ml.di.providers import providers as ml_providers
+from app.infra.ml.http_recommendation_provider import HttpRecommendationProvider
 from app.infra.notifications.di.providers import providers as notification_providers
 from app.infra.oauth.di.providers import providers as oauth_providers
 from app.infra.persistence.sqla.di.providers import providers as sqla_providers
@@ -25,6 +28,18 @@ class MockIdentityProviderProvider(Provider):
         return MockIdentityProvider()
 
 
+class HttpRecommendationProviderForTests(Provider):
+    scope: BaseScope | None = Scope.REQUEST
+
+    def __init__(self, *, base_url: str) -> None:
+        super().__init__()
+        self._base_url = base_url
+
+    @provide(scope=Scope.REQUEST)
+    def recommendation_provider(self) -> RecommendationProvider:
+        return HttpRecommendationProvider(base_url=self._base_url)
+
+
 def build_test_container() -> AsyncContainer:
     return make_async_container(
         *config_providers,
@@ -32,6 +47,27 @@ def build_test_container() -> AsyncContainer:
         *security_providers,
         *oauth_providers,
         *ml_providers,
+        *storage_providers,
+        *auth_identity_providers,
+        *notification_providers,
+        MockIdentityProviderProvider(),
+        *notification_device_providers,
+        *profile_providers,
+        *recommendation_providers,
+        *dating_profile_providers,
+        *interaction_providers,
+        validation_settings=STRICT_VALIDATION,
+    )
+
+
+def build_http_ml_test_container(*, base_url: str) -> AsyncContainer:
+    return make_async_container(
+        *config_providers,
+        *sqla_providers,
+        *security_providers,
+        *oauth_providers,
+        PhotoModerationProviderInfraProvider(),
+        HttpRecommendationProviderForTests(base_url=base_url),
         *storage_providers,
         *auth_identity_providers,
         *notification_providers,
