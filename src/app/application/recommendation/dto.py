@@ -2,6 +2,7 @@ from datetime import date
 
 from app.application.common.dto import dto
 from app.domain.recommendation.value_objects import RecommendationFeatureName
+from app.domain.user.value_objects import Gender
 
 
 @dto
@@ -18,6 +19,7 @@ class RecommendationCandidateProfileItem:
     first_name: str
     last_name: str | None
     birth_date: date
+    gender: Gender
     region: str | None
     avatar_url: str | None
 

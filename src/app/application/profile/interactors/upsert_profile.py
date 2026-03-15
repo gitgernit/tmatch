@@ -6,7 +6,7 @@ from app.application.common.unit_of_work import UnitOfWork
 from app.application.profile.dto import ProfileResult
 from app.domain.audit_event.entity import AuditEvent
 from app.domain.audit_event.value_objects import AuditEventType
-from app.domain.user.value_objects import Profile
+from app.domain.user.value_objects import Gender, Profile
 
 
 @interactor
@@ -19,6 +19,7 @@ class UpsertProfileInteractor:
         first_name: str,
         last_name: str | None,
         birth_date: date,
+        gender: Gender,
         region: str | None,
         avatar_url: str | None,
     ) -> ProfileResult:
@@ -28,15 +29,17 @@ class UpsertProfileInteractor:
                 first_name=first_name,
                 last_name=last_name,
                 birth_date=birth_date,
+                gender=gender,
                 region=region,
                 avatar_url=avatar_url,
             )
         else:
             profile = Profile(
-                first_name=user.profile.first_name,
-                last_name=user.profile.last_name,
-                birth_date=user.profile.birth_date,
-                region=user.profile.region,
+                first_name=first_name,
+                last_name=last_name,
+                birth_date=birth_date,
+                gender=gender,
+                region=region,
                 avatar_url=avatar_url,
             )
         user.profile = profile

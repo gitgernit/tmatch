@@ -2,11 +2,14 @@ from datetime import date
 
 from pydantic import BaseModel, Field
 
+from app.domain.user.value_objects import Gender
+
 
 class UpsertProfileRequest(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=80)
     last_name: str | None = Field(None, min_length=1, max_length=80)
     birth_date: date
+    gender: Gender
     region: str | None = Field(None, min_length=1, max_length=120)
     avatar_url: str | None = Field(None, max_length=2048)
 
@@ -16,6 +19,7 @@ class ProfileResponse(BaseModel):
     first_name: str
     last_name: str | None
     birth_date: date
+    gender: Gender
     region: str | None
     avatar_url: str | None
 

@@ -8,6 +8,7 @@ from app.application.notification_device.di.providers import providers as notifi
 from app.application.profile.di.providers import providers as profile_providers
 from app.application.recommendation.di.providers import providers as recommendation_providers
 from app.application.recommendation.protocol import RecommendationProvider
+from app.application.targeting.di.providers import providers as targeting_providers
 from app.application.user.data_gateway import UserDataGateway
 from app.infra.config.di.providers import providers as config_providers
 from app.infra.ml.di.providers import PhotoModerationProviderInfraProvider
@@ -64,6 +65,7 @@ def build_test_container() -> AsyncContainer:
         *notification_device_providers,
         *profile_providers,
         *recommendation_providers,
+        *targeting_providers,
         *dating_profile_providers,
         *interaction_providers,
         validation_settings=STRICT_VALIDATION,
@@ -85,6 +87,7 @@ def build_http_ml_test_container(*, base_url: str) -> AsyncContainer:
         *notification_device_providers,
         *profile_providers,
         *recommendation_providers,
+        *targeting_providers,
         *dating_profile_providers,
         *interaction_providers,
         validation_settings=STRICT_VALIDATION,

@@ -18,4 +18,5 @@ from app.infra.persistence.sqla.rows.profile import ProfileRow as ProfileRow
 from app.infra.persistence.sqla.rows.recommendation import (
     RecommendationRow as RecommendationRow,
 )
+from app.infra.persistence.sqla.rows.targeting import TargetingRow as TargetingRow
 from app.infra.persistence.sqla.rows.user import UserRow as UserRow

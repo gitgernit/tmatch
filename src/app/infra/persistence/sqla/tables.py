@@ -20,6 +20,8 @@ from sqlalchemy.orm import registry
 from app.domain.audit_event.value_objects import AuditEventType
 from app.domain.auth_identity.value_objects import AuthMethod
 from app.domain.interaction.value_objects import InteractionType
+from app.domain.targeting.value_objects import TargetGender
+from app.domain.user.value_objects import Gender
 from app.infra.persistence.sqla.rows import (
     AccessTokenRow,
     AuditEventRow,
@@ -31,6 +33,7 @@ from app.infra.persistence.sqla.rows import (
     NotificationDeviceRow,
     ProfileRow,
     RecommendationRow,
+    TargetingRow,
     UserRow,
 )
 
@@ -52,6 +55,7 @@ profile_table: Final = Table(
     Column("first_name", String, nullable=False),
     Column("last_name", String, nullable=True),
     Column("birth_date", Date, nullable=False),
+    Column("gender", Enum(Gender, name="profile_gender"), nullable=False),
     Column("region", String, nullable=True),
     Column("avatar_url", String, nullable=True),
     Column("created_at", DateTime(timezone=True), nullable=False),
@@ -101,6 +105,18 @@ recommendation_table: Final = Table(
     Column("candidate_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
     Column("reasons", JSONB, nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
+)
+
+targeting_table: Final = Table(
+    "targeting",
+    meta_data,
+    Column("user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+    Column("region", String, nullable=True),
+    Column("gender_target", Enum(TargetGender, name="target_gender"), nullable=False),
+    Column("age_from", Integer, nullable=False),
+    Column("age_to", Integer, nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=True),
 )
 
 dating_profile_table: Final = Table(
@@ -172,6 +188,7 @@ mapper_registry.map_imperatively(AuthIdentityRow, auth_identity_table)
 mapper_registry.map_imperatively(AccessTokenRow, access_token_table)
 mapper_registry.map_imperatively(NotificationDeviceRow, notification_device_table)
 mapper_registry.map_imperatively(RecommendationRow, recommendation_table)
+mapper_registry.map_imperatively(TargetingRow, targeting_table)
 mapper_registry.map_imperatively(DatingProfileRow, dating_profile_table)
 mapper_registry.map_imperatively(DatingProfilePhotoRow, dating_profile_photo_table)
 mapper_registry.map_imperatively(DatingProfileTraitRow, dating_profile_trait_table)

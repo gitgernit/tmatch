@@ -13,6 +13,7 @@ from app.application.recommendation.interactors.get_recommendations import (
     GetRecommendationsInteractor,
 )
 from app.application.user.data_gateway import UserDataGateway
+from app.domain.user.value_objects import Gender
 from tests.integration.di.identity_provider import MockIdentityProvider  # noqa: TC001
 
 
@@ -40,6 +41,7 @@ async def test_recommendations_with_http_ml_provider_for_user_absent_in_dataset(
         first_name="Http",
         last_name="Ml",
         birth_date=date(1990, 1, 1),
+        gender=Gender.MALE,
         region=None,
         avatar_url=None,
     )

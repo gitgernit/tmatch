@@ -10,6 +10,7 @@ from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthId
 from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.recommendation import DefaultRecommendationDataGateway
+from app.infra.persistence.sqla.data_gateways.targeting import DefaultTargetingDataGateway
 from app.infra.persistence.sqla.data_gateways.user import DefaultUserDataGateway
 from app.infra.persistence.sqla.mappers import GlobalDataMapper
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
@@ -19,6 +20,7 @@ from app.infra.persistence.sqla.mappers.dating_profile_mapper import DatingProfi
 from app.infra.persistence.sqla.mappers.interaction_mapper import InteractionMapper
 from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
 from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
+from app.infra.persistence.sqla.mappers.targeting_mapper import TargetingMapper
 from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
 from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
@@ -68,6 +70,7 @@ class MapperProvider(Provider):
     access_token_mapper = provide(AccessTokenMapper, scope=Scope.REQUEST)
     notification_device_mapper = provide(NotificationDeviceMapper, scope=Scope.REQUEST)
     recommendation_mapper = provide(RecommendationMapper, scope=Scope.REQUEST)
+    targeting_mapper = provide(TargetingMapper, scope=Scope.REQUEST)
     dating_profile_mapper = provide(DatingProfileMapper, scope=Scope.REQUEST)
     interaction_mapper = provide(InteractionMapper, scope=Scope.REQUEST)
     audit_event_mapper = provide(AuditEventMapper, scope=Scope.REQUEST)
@@ -85,6 +88,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultDatingProfileDataGateway],
         WithParents[DefaultNotificationDeviceDataGateway],
         WithParents[DefaultRecommendationDataGateway],
+        WithParents[DefaultTargetingDataGateway],
     )
 
 

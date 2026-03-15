@@ -83,6 +83,7 @@ class GetRecommendationsInteractor:
                             first_name=candidate.profile.first_name,
                             last_name=candidate.profile.last_name,
                             birth_date=candidate.profile.birth_date,
+                            gender=candidate.profile.gender,
                             region=candidate.profile.region,
                             avatar_url=candidate.profile.avatar_url,
                         )

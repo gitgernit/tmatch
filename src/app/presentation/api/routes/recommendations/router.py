@@ -47,6 +47,7 @@ async def get_recommendations(
                                 "first_name": item.candidate_card.profile.first_name,
                                 "last_name": item.candidate_card.profile.last_name,
                                 "birth_date": item.candidate_card.profile.birth_date,
+                                "gender": item.candidate_card.profile.gender,
                                 "region": item.candidate_card.profile.region,
                                 "avatar_url": item.candidate_card.profile.avatar_url,
                             }

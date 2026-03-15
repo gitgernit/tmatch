@@ -7,6 +7,7 @@ from app.application.interaction.di.providers import providers as interaction_pr
 from app.application.notification_device.di.providers import providers as notification_device_providers
 from app.application.profile.di.providers import providers as profile_providers
 from app.application.recommendation.di.providers import providers as recommendation_providers
+from app.application.targeting.di.providers import providers as targeting_providers
 from app.infra.config.di.providers import providers as config_providers
 from app.infra.ml.di.providers import providers as ml_providers
 from app.infra.notifications.di.providers import providers as notification_providers
@@ -32,6 +33,7 @@ def build_container() -> AsyncContainer:
         *notification_device_providers,
         *profile_providers,
         *recommendation_providers,
+        *targeting_providers,
         *dating_profile_providers,
         *interaction_providers,
         validation_settings=STRICT_VALIDATION,

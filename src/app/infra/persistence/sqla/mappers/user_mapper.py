@@ -23,6 +23,7 @@ class UserMapper:
             first_name=user.profile.first_name,
             last_name=user.profile.last_name,
             birth_date=user.profile.birth_date,
+            gender=user.profile.gender,
             region=user.profile.region,
             avatar_url=user.profile.avatar_url,
             created_at=now,
@@ -36,11 +37,17 @@ class UserMapper:
             msg = "UserRow must have id and created_at"
             raise ValueError(msg)
         profile: Profile | None = None
-        if profile_row is not None and profile_row.first_name and profile_row.birth_date is not None:
+        if (
+            profile_row is not None
+            and profile_row.first_name
+            and profile_row.birth_date is not None
+            and profile_row.gender is not None
+        ):
             profile = Profile(
                 first_name=profile_row.first_name,
                 last_name=profile_row.last_name,
                 birth_date=profile_row.birth_date,
+                gender=profile_row.gender,
                 region=profile_row.region,
                 avatar_url=profile_row.avatar_url,
             )

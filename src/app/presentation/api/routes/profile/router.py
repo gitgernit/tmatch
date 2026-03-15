@@ -42,6 +42,7 @@ async def get_profile(
         first_name=p.first_name,
         last_name=p.last_name,
         birth_date=p.birth_date,
+        gender=p.gender,
         region=p.region,
         avatar_url=p.avatar_url,
     )
@@ -61,6 +62,7 @@ async def upsert_profile(
             first_name=data.first_name,
             last_name=data.last_name,
             birth_date=data.birth_date,
+            gender=data.gender,
             region=data.region,
             avatar_url=data.avatar_url,
         )
@@ -73,6 +75,7 @@ async def upsert_profile(
         first_name=p.first_name,
         last_name=p.last_name,
         birth_date=p.birth_date,
+        gender=p.gender,
         region=p.region,
         avatar_url=p.avatar_url,
     )
@@ -98,6 +101,7 @@ async def get_self_card(
             first_name=result.profile.first_name,
             last_name=result.profile.last_name,
             birth_date=result.profile.birth_date,
+            gender=result.profile.gender,
             region=result.profile.region,
             avatar_url=result.profile.avatar_url,
         )
@@ -146,6 +150,7 @@ async def get_user_card(
             first_name=result.profile.first_name,
             last_name=result.profile.last_name,
             birth_date=result.profile.birth_date,
+            gender=result.profile.gender,
             region=result.profile.region,
             avatar_url=result.profile.avatar_url,
         )

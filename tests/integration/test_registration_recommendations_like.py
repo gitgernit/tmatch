@@ -21,6 +21,7 @@ from app.application.recommendation.interactors.get_recommendations import (
 from app.application.user.data_gateway import UserDataGateway
 from app.domain.interaction.value_objects import InteractionType
 from app.domain.user.entity import UserId
+from app.domain.user.value_objects import Gender
 from tests.integration.di.identity_provider import MockIdentityProvider  # noqa: TC001
 
 
@@ -49,6 +50,7 @@ async def test_registration_recommendations_like_flow(
         first_name="Test",
         last_name="User",
         birth_date=date(1990, 1, 1),
+        gender=Gender.MALE,
         region=None,
         avatar_url=None,
     )

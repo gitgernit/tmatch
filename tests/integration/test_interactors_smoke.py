@@ -27,6 +27,8 @@ from app.application.profile.interactors.upsert_profile import UpsertProfileInte
 from app.application.recommendation.interactors.get_recommendations import (
     GetRecommendationsInteractor,
 )
+from app.application.targeting.interactors.get_my_targeting import GetMyTargetingInteractor
+from app.application.targeting.interactors.upsert_my_targeting import UpsertMyTargetingInteractor
 
 
 async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
@@ -40,6 +42,8 @@ async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     upsert_dating_profile = await test_container.get(UpsertDatingProfileInteractor)
     set_trait_visibility = await test_container.get(SetTraitVisibilityInteractor)
     get_recommendations = await test_container.get(GetRecommendationsInteractor)
+    get_my_targeting = await test_container.get(GetMyTargetingInteractor)
+    upsert_my_targeting = await test_container.get(UpsertMyTargetingInteractor)
     create_interaction = await test_container.get(CreateInteractionInteractor)
     send_notification = await test_container.get(SendNotificationInteractor)
     register_device = await test_container.get(RegisterNotificationDeviceInteractor)
@@ -54,6 +58,8 @@ async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     assert upsert_dating_profile is not None
     assert set_trait_visibility is not None
     assert get_recommendations is not None
+    assert get_my_targeting is not None
+    assert upsert_my_targeting is not None
     assert create_interaction is not None
     assert send_notification is not None
     assert register_device is not None

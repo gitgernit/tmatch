@@ -16,6 +16,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 
 from app.domain.auth_identity.value_objects import AuthMethod
+from app.domain.user.value_objects import Gender
 from app.infra.config.loaders import EnvAccessTokenConfigLoader, EnvPostgresConfigLoader
 from app.infra.config.sources import EnvSource
 from app.infra.persistence.sqla.tables import (
@@ -107,12 +108,14 @@ def _insert_profiles_batch(engine: Engine, user_ids: list[UUID]) -> int:
     rows: list[dict[str, object]] = []
     for user_id in user_ids:
         fake = _build_faker_for_user(user_id)
+        gender = Gender.MALE if user_id.int % 2 == 0 else Gender.FEMALE
         rows.append(
             {
                 "user_id": user_id,
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
                 "birth_date": fake.date_of_birth(minimum_age=18, maximum_age=45),
+                "gender": gender,
                 "region": DEFAULT_REGION,
                 "avatar_url": None,
                 "created_at": now,
