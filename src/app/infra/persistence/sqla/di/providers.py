@@ -8,6 +8,7 @@ from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
 from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
+from app.infra.persistence.sqla.data_gateways.match import DefaultMatchDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.recommendation import DefaultRecommendationDataGateway
 from app.infra.persistence.sqla.data_gateways.targeting import DefaultTargetingDataGateway
@@ -89,6 +90,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultNotificationDeviceDataGateway],
         WithParents[DefaultRecommendationDataGateway],
         WithParents[DefaultTargetingDataGateway],
+        WithParents[DefaultMatchDataGateway],
     )
 
 

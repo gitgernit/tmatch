@@ -14,6 +14,7 @@ from app.application.dating_profile.interactors.upsert_dating_profile import (
 from app.application.interaction.interactors.create_interaction import (
     CreateInteractionInteractor,
 )
+from app.application.match.interactors.get_my_matches import GetMyMatchesInteractor
 from app.application.notification_device.interactors.register_device import (
     RegisterNotificationDeviceInteractor,
 )
@@ -45,6 +46,7 @@ async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     get_my_targeting = await test_container.get(GetMyTargetingInteractor)
     upsert_my_targeting = await test_container.get(UpsertMyTargetingInteractor)
     create_interaction = await test_container.get(CreateInteractionInteractor)
+    get_my_matches = await test_container.get(GetMyMatchesInteractor)
     send_notification = await test_container.get(SendNotificationInteractor)
     register_device = await test_container.get(RegisterNotificationDeviceInteractor)
 
@@ -61,5 +63,6 @@ async def test_all_interactors_resolve(test_container: AsyncContainer) -> None:
     assert get_my_targeting is not None
     assert upsert_my_targeting is not None
     assert create_interaction is not None
+    assert get_my_matches is not None
     assert send_notification is not None
     assert register_device is not None
