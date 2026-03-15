@@ -19,6 +19,8 @@ services:
     restart: always
     env_file:
       - .env
+    ports:
+      - "${POSTGRES_EXPOSE_PORT:-5432}:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-d", "app"]
       interval: 5s
