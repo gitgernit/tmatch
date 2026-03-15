@@ -4,7 +4,7 @@ import argparse
 import csv
 import logging
 import re
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 from urllib.parse import quote_plus
@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 
 from app.domain.auth_identity.value_objects import AuthMethod
+from app.domain.targeting.value_objects import TargetGender
 from app.domain.user.value_objects import Gender
 from app.infra.config.loaders import EnvAccessTokenConfigLoader, EnvPostgresConfigLoader
 from app.infra.config.sources import EnvSource
@@ -25,6 +26,7 @@ from app.infra.persistence.sqla.tables import (
     dating_profile_photo_table,
     dating_profile_table,
     profile_table,
+    targeting_table,
     user_table,
 )
 from app.infra.security.password_utils import FernetPasswordService
@@ -77,6 +79,22 @@ def _build_faker_for_user(user_id: UUID) -> Faker:
     return fake
 
 
+def _calculate_age(birth_date: date) -> int:
+    today = datetime.now(tz=UTC).date()
+    return today.year - birth_date.year - (
+        (today.month, today.day) < (birth_date.month, birth_date.day)
+    )
+
+
+def _build_fake_profile_fields(user_id: UUID) -> tuple[str, str, date, Gender]:
+    fake = _build_faker_for_user(user_id)
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    birth_date = fake.date_of_birth(minimum_age=18, maximum_age=45)
+    gender = Gender.MALE if user_id.int % 2 == 0 else Gender.FEMALE
+    return first_name, last_name, birth_date, gender
+
+
 def _extract_uuid(raw_row: dict[str, str]) -> UUID | None:
     raw_value = (raw_row.get("uuid") or raw_row.get("user_id") or raw_row.get("id") or "").strip()
     if not raw_value:
@@ -119,14 +137,13 @@ def _insert_profiles_batch(engine: Engine, user_ids: list[UUID]) -> int:
     now = datetime.now(tz=UTC)
     rows: list[dict[str, object]] = []
     for user_id in user_ids:
-        fake = _build_faker_for_user(user_id)
-        gender = Gender.MALE if user_id.int % 2 == 0 else Gender.FEMALE
+        first_name, last_name, birth_date, gender = _build_fake_profile_fields(user_id)
         rows.append(
             {
                 "user_id": user_id,
-                "first_name": fake.first_name(),
-                "last_name": fake.last_name(),
-                "birth_date": fake.date_of_birth(minimum_age=18, maximum_age=45),
+                "first_name": first_name,
+                "last_name": last_name,
+                "birth_date": birth_date,
                 "gender": gender,
                 "region": DEFAULT_REGION,
                 "avatar_url": None,
@@ -184,9 +201,7 @@ def _insert_dating_photos_batch(engine: Engine, inserted_profiles: list[tuple[UU
 
 
 def _build_auth_identity_payload(user_id: UUID, password_hasher: FernetPasswordService) -> dict[str, object]:
-    fake = _build_faker_for_user(user_id)
-    first_name = fake.first_name()
-    last_name = fake.last_name()
+    first_name, last_name, _, _ = _build_fake_profile_fields(user_id)
     local_part = _name_to_email_local(first_name, last_name)
     identifier = f"{local_part}@{EMAIL_DOMAIN}"
     return {
@@ -197,6 +212,36 @@ def _build_auth_identity_payload(user_id: UUID, password_hasher: FernetPasswordS
         "secret_key": password_hasher.hash(DEFAULT_PASSWORD),
         "created_at": datetime.now(tz=UTC),
     }
+
+
+def _insert_targeting_batch(engine: Engine, user_ids: list[UUID]) -> int:
+    if not user_ids:
+        return 0
+    now = datetime.now(tz=UTC)
+    rows: list[dict[str, object]] = []
+    for user_id in user_ids:
+        _, _, birth_date, _ = _build_fake_profile_fields(user_id)
+        age = _calculate_age(birth_date)
+        rows.append(
+            {
+                "user_id": user_id,
+                "region": DEFAULT_REGION,
+                "gender_target": TargetGender.BOTH,
+                "age_from": max(0, age - 2),
+                "age_to": age + 2,
+                "created_at": now,
+                "updated_at": now,
+            },
+        )
+    stmt = (
+        insert(targeting_table)
+        .values(rows)
+        .on_conflict_do_nothing(index_elements=[targeting_table.c.user_id])
+        .returning(targeting_table.c.user_id)
+    )
+    with engine.begin() as conn:
+        result = conn.execute(stmt)
+        return len(result.fetchall())
 
 
 def _insert_auth_identities_batch(
@@ -241,6 +286,7 @@ def run(*, input_path: Path) -> None:
     inserted_dating_profiles_total = 0
     inserted_dating_photos_total = 0
     inserted_auth_identities_total = 0
+    inserted_targeting_total = 0
     skipped_users_total = 0
     checkpoint_idx = 0
     batch: list[UUID] = []
@@ -263,6 +309,7 @@ def run(*, input_path: Path) -> None:
                 batch,
                 password_hasher,
             )
+            inserted_targeting_total += _insert_targeting_batch(engine, batch)
             batch.clear()
 
         while checkpoint_idx < len(CHECKPOINTS) and processed_total >= CHECKPOINTS[checkpoint_idx]:
@@ -293,13 +340,14 @@ def run(*, input_path: Path) -> None:
             batch,
             password_hasher,
         )
+        inserted_targeting_total += _insert_targeting_batch(engine, batch)
 
     skipped_users_total = processed_total - inserted_users_total
     logger.info(
         (
             "import_finished processed=%s inserted_users=%s skipped_users=%s "
             "inserted_profiles=%s inserted_dating_profiles=%s inserted_dating_photos=%s "
-            "inserted_auth_identities=%s "
+            "inserted_auth_identities=%s inserted_targeting=%s "
             "max_users=%s"
         ),
         processed_total,
@@ -309,6 +357,7 @@ def run(*, input_path: Path) -> None:
         inserted_dating_profiles_total,
         inserted_dating_photos_total,
         inserted_auth_identities_total,
+        inserted_targeting_total,
         MAX_USERS_TO_LOAD,
     )
 

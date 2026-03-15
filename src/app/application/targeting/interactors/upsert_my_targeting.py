@@ -9,7 +9,7 @@ from app.domain.targeting.value_objects import TargetGender, TargetingRules
 
 
 def _validate_rules(rules: TargetingRules) -> None:
-    if rules.age_from < 18:
+    if rules.age_from < 0:
         raise TargetingValidationError
     if rules.age_to < rules.age_from:
         raise TargetingValidationError

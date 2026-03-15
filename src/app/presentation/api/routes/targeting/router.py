@@ -1,10 +1,10 @@
 from dishka.integrations.litestar import DishkaRouter, FromDishka
 from litestar import get, put
 from litestar.exceptions import HTTPException
-from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
+from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 from app.application.auth_identity.errors import UserUnauthorizedError
-from app.application.targeting.errors import TargetingNotFoundError, TargetingValidationError
+from app.application.targeting.errors import TargetingValidationError
 from app.application.targeting.interactors.get_my_targeting import GetMyTargetingInteractor
 from app.application.targeting.interactors.upsert_my_targeting import UpsertMyTargetingInteractor
 from app.presentation.api.routes.targeting.dto import (
@@ -25,11 +25,6 @@ async def get_targeting(
         result = await interactor.execute()
     except UserUnauthorizedError as error:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized") from error
-    except TargetingNotFoundError as error:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
-            detail="Targeting not set yet",
-        ) from error
     r = result.rules
     return TargetingResponse(
         region=r.region,
@@ -60,7 +55,7 @@ async def upsert_targeting(
     except TargetingValidationError as error:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
-            detail="Invalid targeting rules (e.g. age_from >= 18, age_to >= age_from)",
+            detail="Invalid targeting rules (e.g. age_from >= 0, age_to >= age_from)",
         ) from error
     r = result.rules
     return TargetingResponse(
