@@ -9,6 +9,7 @@ from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessT
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
 from app.infra.persistence.sqla.data_gateways.blocked_pairs import DefaultBlockedPairsGateway
 from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
+from app.infra.persistence.sqla.data_gateways.incoming_likes import DefaultIncomingLikesDataGateway
 from app.infra.persistence.sqla.data_gateways.match import DefaultMatchDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
 from app.infra.persistence.sqla.data_gateways.recommendation import DefaultRecommendationDataGateway
@@ -93,6 +94,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultTargetingDataGateway],
         WithParents[DefaultMatchDataGateway],
         WithParents[DefaultBlockedPairsGateway],
+        WithParents[DefaultIncomingLikesDataGateway],
     )
 
 

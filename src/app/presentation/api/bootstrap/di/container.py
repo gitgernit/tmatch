@@ -3,6 +3,7 @@ from dishka.integrations.litestar import LitestarProvider
 
 from app.application.auth_identity.di.providers import providers as auth_identity_providers
 from app.application.dating_profile.di.providers import providers as dating_profile_providers
+from app.application.incoming_likes.di.providers import providers as incoming_likes_providers
 from app.application.interaction.di.providers import providers as interaction_providers
 from app.application.match.di.providers import providers as match_providers
 from app.application.notification_device.di.providers import providers as notification_device_providers
@@ -36,6 +37,7 @@ def build_container() -> AsyncContainer:
         *profile_providers,
         *recommendation_providers,
         *match_providers,
+        *incoming_likes_providers,
         *preview_providers,
         *targeting_providers,
         *dating_profile_providers,
