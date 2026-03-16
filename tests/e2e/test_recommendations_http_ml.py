@@ -62,4 +62,3 @@ async def test_recommendations_with_http_ml_provider_for_user_absent_in_dataset_
         assert item.ml_recommendation_id
         assert item.candidate_user_id
         assert item.reasons
-

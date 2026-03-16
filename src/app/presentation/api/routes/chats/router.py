@@ -29,6 +29,12 @@ from app.presentation.api.routes.chats.dto import (
     ChatsResponse,
     SendMessageRequest,
 )
+from app.presentation.api.routes.profile.dto import (
+    CardDatingProfileResponse,
+    CardDatingTraitResponse,
+    ProfileResponse,
+    SelfCardResponse,
+)
 
 
 @get(
@@ -44,17 +50,56 @@ async def get_my_chats(
     except UserUnauthorizedError as error:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized") from error
 
-    items = [
-        ChatItemResponse(
-            chat_id=chat.chat_id,
-            other_user_id=chat.other_user_id,
-            last_message_id=chat.last_message_id,
-            last_message_text=chat.last_message_text,
-            last_message_created_at=chat.last_message_created_at,
+    chat_items: list[ChatItemResponse] = []
+    for chat in result.items:
+        other_user_card_response: SelfCardResponse | None = None
+        if chat.other_user_card is not None:
+            card = chat.other_user_card
+
+            profile_response: ProfileResponse | None = None
+            if card.profile is not None:
+                profile_response = ProfileResponse(
+                    user_id=card.user_id,
+                    first_name=card.profile.first_name,
+                    last_name=card.profile.last_name,
+                    birth_date=card.profile.birth_date,
+                    gender=card.profile.gender,
+                    region=card.profile.region,
+                    avatar_url=card.profile.avatar_url,
+                )
+
+            dating_profile_response: CardDatingProfileResponse | None = None
+            if card.dating_profile is not None:
+                dating_profile_response = CardDatingProfileResponse(
+                    photos=card.dating_profile.photos,
+                    traits=[
+                        CardDatingTraitResponse(
+                            trait_code=trait.trait_code,
+                            score=trait.score,
+                            is_hidden=trait.is_hidden,
+                        )
+                        for trait in card.dating_profile.traits
+                    ],
+                )
+
+            other_user_card_response = SelfCardResponse(
+                user_id=card.user_id,
+                profile=profile_response,
+                dating_profile=dating_profile_response,
+            )
+
+        chat_items.append(
+            ChatItemResponse(
+                chat_id=chat.chat_id,
+                other_user_id=chat.other_user_id,
+                last_message_id=chat.last_message_id,
+                last_message_text=chat.last_message_text,
+                last_message_created_at=chat.last_message_created_at,
+                other_user_card=other_user_card_response,
+            ),
         )
-        for chat in result.items
-    ]
-    return ChatsResponse(items=items)
+
+    return ChatsResponse(items=chat_items)
 
 
 @get(

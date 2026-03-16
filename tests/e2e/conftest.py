@@ -32,4 +32,3 @@ async def ml_http_container() -> AsyncGenerator[AsyncContainer, None]:
 @pytest.fixture
 async def ml_http_identity_provider(ml_http_container: AsyncContainer) -> IdentityProvider:
     return cast("IdentityProvider", await ml_http_container.get(IdentityProvider))
-

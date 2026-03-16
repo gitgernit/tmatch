@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.application.common.dto import dto
+from app.application.profile.dto import SelfCardResult
 from app.domain.chat.entity import ChatId, MessageId
 from app.domain.user.entity import UserId
 
@@ -12,6 +13,7 @@ class ChatItemResult:
     last_message_id: MessageId | None
     last_message_text: str | None
     last_message_created_at: datetime | None
+    other_user_card: SelfCardResult | None
 
 
 @dto

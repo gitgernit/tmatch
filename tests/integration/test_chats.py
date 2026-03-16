@@ -137,4 +137,3 @@ async def test_chat_flow_between_matched_users(
     assert stored.chat_id == chat_id
     assert stored.sender_user_id == user_a_id
     assert stored.text == text
-

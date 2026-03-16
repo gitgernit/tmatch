@@ -3,6 +3,10 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from app.presentation.api.routes.profile.dto import (
+    SelfCardResponse,
+)
+
 
 class ChatItemResponse(BaseModel):
     chat_id: UUID
@@ -10,6 +14,7 @@ class ChatItemResponse(BaseModel):
     last_message_id: UUID | None
     last_message_text: str | None
     last_message_created_at: datetime | None
+    other_user_card: SelfCardResponse | None
 
 
 class ChatsResponse(BaseModel):
