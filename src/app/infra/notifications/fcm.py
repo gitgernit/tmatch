@@ -7,7 +7,6 @@ from structlog import get_logger
 
 from app.application.common.notifications.service import NotificationService
 
-
 logger = get_logger(__name__)
 
 

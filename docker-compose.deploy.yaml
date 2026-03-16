@@ -10,6 +10,8 @@ services:
     environment:
       POSTGRES_HOST: postgres
       ML_BASE_URL: ${ML_BASE_URL:-http://ml-internal:8080}
+    volumes:
+      - ./certificates:/certificates:ro
     networks:
       - default
       - shared
