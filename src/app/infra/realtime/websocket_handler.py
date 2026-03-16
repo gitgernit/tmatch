@@ -2,7 +2,7 @@ from dataclasses import asdict
 from typing import Any, override
 
 import structlog
-from dishka.integrations.litestar import FromDishka
+from dishka.integrations.litestar import FromDishka, inject_websocket
 from litestar import WebSocket, websocket
 from litestar.status_codes import WS_1008_POLICY_VIOLATION
 
@@ -54,7 +54,8 @@ async def _authenticate_websocket_user(
     return user
 
 
-@websocket(path="/chat/stream")
+@websocket(path="/ws/chat_stream")
+@inject_websocket
 async def chat_websocket_handler(
     socket: WebSocket[Any, Any, Any],
     messaging_service: FromDishka[MessagingService],
@@ -63,10 +64,7 @@ async def chat_websocket_handler(
     access_token_cryptographer: FromDishka[AccessTokenCryptographer],
 ) -> None:
     token = socket.query_params.get("token")
-    print(token)  # noqa
-    logger.info("token.received", token=token)
-    raise RuntimeError(token)
-    if not token:  # type: ignore[unreachable]
+    if not token:
         await socket.close(code=WS_1008_POLICY_VIOLATION)
         return
 
@@ -81,7 +79,6 @@ async def chat_websocket_handler(
         await socket.close(code=WS_1008_POLICY_VIOLATION)
         return
 
-    await socket.accept()
     consumer = WebSocketChatConsumer(socket, str(user.id))
     messaging_service.register(user.id, consumer)
 
