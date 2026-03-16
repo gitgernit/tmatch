@@ -1,13 +1,12 @@
 from typing import Any, override
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 from structlog import get_logger
 
 from app.application.common.unit_of_work import UnitOfWork
 from app.domain.common.entity import Entity
 from app.infra.persistence.sqla.mappers import GlobalDataMapper
-
 
 logger = get_logger(__name__)
 
@@ -31,5 +30,5 @@ class DefaultUnitOfWork(UnitOfWork):
             self._pending.clear()
             await self._session.commit()
         except SQLAlchemyError as exc:  # pragma: no cover - defensive logging
-            logger.error("uow_commit_failed", error=str(exc))
+            logger.exception("uow_commit_failed", error=str(exc))
             raise
