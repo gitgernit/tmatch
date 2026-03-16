@@ -1,10 +1,15 @@
 from typing import Any, override
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
+from structlog import get_logger
 
 from app.application.common.unit_of_work import UnitOfWork
 from app.domain.common.entity import Entity
 from app.infra.persistence.sqla.mappers import GlobalDataMapper
+
+
+logger = get_logger(__name__)
 
 
 class DefaultUnitOfWork(UnitOfWork):
@@ -19,8 +24,12 @@ class DefaultUnitOfWork(UnitOfWork):
 
     @override
     async def commit(self) -> None:
-        for entity in self._pending:
-            for row in self._data_mapper.to_rows(entity):
-                await self._session.merge(row)
-        self._pending.clear()
-        await self._session.commit()
+        try:
+            for entity in self._pending:
+                for row in self._data_mapper.to_rows(entity):
+                    await self._session.merge(row)
+            self._pending.clear()
+            await self._session.commit()
+        except SQLAlchemyError as exc:  # pragma: no cover - defensive logging
+            logger.error("uow_commit_failed", error=str(exc))
+            raise
