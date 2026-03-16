@@ -38,7 +38,7 @@ from app.presentation.api.routes.recommendations.router import router as recomme
 from app.presentation.api.routes.targeting.router import router as targeting_router
 
 
-async def after_exception_handler(exc: Exception, scope: Scope) -> None:
+def after_exception_handler(exc: Exception, scope: Scope) -> None:  # noqa: ARG001
     logger = structlog.get_logger("after_exception")
     logger.exception("Unhandled exception", exc_info=exc)
 
@@ -80,7 +80,7 @@ def create_app(
             chats_router,
         ],
         middleware=[metrics_middleware],
-        after_exception=after_exception_handler,
+        after_exception=[after_exception_handler],
         plugins=[OpenTelemetryPlugin(config=litestar_otel_config)],
         openapi_config=openapi_config,
     )
