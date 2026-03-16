@@ -93,6 +93,8 @@ class SendChatMessageInteractor:
                 data={
                     "chat_id": str(chat.id),
                     "sender_user_id": str(user.id),
+                    "sender_name": sender_name,
+                    "text": text,
                 },
             )
 
