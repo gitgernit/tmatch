@@ -2,6 +2,7 @@ from dataclasses import asdict
 from typing import Any, override
 
 import structlog
+from dishka import AsyncContainer
 from dishka.integrations.litestar import FromDishka, inject_websocket
 from litestar import WebSocket, websocket
 from litestar.status_codes import WS_1008_POLICY_VIOLATION
@@ -58,32 +59,37 @@ async def _authenticate_websocket_user(
 @inject_websocket
 async def chat_websocket_handler(
     socket: WebSocket[Any, Any, Any],
-    messaging_service: FromDishka[MessagingService],
-    user_data_gateway: FromDishka[UserDataGateway],
-    access_token_data_gateway: FromDishka[AccessTokenDataGateway],
-    access_token_cryptographer: FromDishka[AccessTokenCryptographer],
+    container: FromDishka[AsyncContainer],
 ) -> None:
-    token = socket.query_params.get("token")
-    if not token:
-        await socket.close(code=WS_1008_POLICY_VIOLATION)
-        return
+    await socket.accept()
 
-    try:
-        user = await _authenticate_websocket_user(
-            token=token,
-            user_data_gateway=user_data_gateway,
-            access_token_data_gateway=access_token_data_gateway,
-            access_token_cryptographer=access_token_cryptographer,
-        )
-    except UserUnauthorizedError:
-        await socket.close(code=WS_1008_POLICY_VIOLATION)
-        return
+    async with container() as request_container:
+        messaging_service: MessagingService = await request_container.get(MessagingService)
+        user_data_gateway: UserDataGateway = await request_container.get(UserDataGateway)
+        access_token_data_gateway: AccessTokenDataGateway = await request_container.get(AccessTokenDataGateway)
+        access_token_cryptographer: AccessTokenCryptographer = await request_container.get(AccessTokenCryptographer)
 
-    consumer = WebSocketChatConsumer(socket, str(user.id))
-    messaging_service.register(user.id, consumer)
+        token = socket.query_params.get("token")
+        if not token:
+            await socket.close(code=WS_1008_POLICY_VIOLATION)
+            return
 
-    try:
-        while True:
-            _ = await socket.receive_json()
-    finally:
-        messaging_service.unregister(user.id, consumer)
+        try:
+            user = await _authenticate_websocket_user(
+                token=token,
+                user_data_gateway=user_data_gateway,
+                access_token_data_gateway=access_token_data_gateway,
+                access_token_cryptographer=access_token_cryptographer,
+            )
+        except UserUnauthorizedError:
+            await socket.close(code=WS_1008_POLICY_VIOLATION)
+            return
+
+        consumer = WebSocketChatConsumer(socket, str(user.id))
+        messaging_service.register(user.id, consumer)
+
+        try:
+            while True:
+                _ = await socket.receive_json()
+        finally:
+            messaging_service.unregister(user.id, consumer)
