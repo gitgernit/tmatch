@@ -2,8 +2,6 @@ services:
   api:
     image: ${API_IMAGE:-api:latest}
     restart: always
-    ports:
-      - "${SERVER_EXPOSE_PORT:-8080}:8080"
     depends_on:
       postgres:
         condition: service_healthy
