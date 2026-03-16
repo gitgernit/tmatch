@@ -1,3 +1,4 @@
+from app.application.chat.data_gateway import ChatDataGateway
 from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
 from app.application.common.notifications.service import NotificationService
@@ -8,13 +9,12 @@ from app.application.match.data_gateway import MatchDataGateway
 from app.application.notification_device.data_gateway import NotificationDeviceDataGateway
 from app.application.recommendation.data_gateway import RecommendationDataGateway
 from app.application.user.data_gateway import UserDataGateway
-from app.application.chat.data_gateway import ChatDataGateway
 from app.domain.audit_event.entity import AuditEvent
 from app.domain.audit_event.value_objects import AuditEventType
+from app.domain.chat.entity import Chat
 from app.domain.interaction.entity import Interaction
 from app.domain.interaction.value_objects import InteractionType
 from app.domain.user.entity import UserId
-from app.domain.chat.entity import Chat
 
 
 @interactor

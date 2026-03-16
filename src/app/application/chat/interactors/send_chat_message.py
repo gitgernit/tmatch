@@ -12,8 +12,8 @@ from app.application.common.interactor import interactor
 from app.application.common.notifications.service import NotificationService
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.interaction.blocked_pairs_gateway import BlockedPairsGateway
-from app.application.notification_device.data_gateway import NotificationDeviceDataGateway
 from app.application.match.data_gateway import MatchDataGateway
+from app.application.notification_device.data_gateway import NotificationDeviceDataGateway
 from app.domain.chat.entity import ChatId, Message
 from app.domain.user.entity import UserId
 
@@ -65,23 +65,19 @@ class SendChatMessageInteractor:
         await self.unit_of_work.add(message)
         await self.unit_of_work.commit()
 
-        try:
-            device = await self.notification_device_data_gateway.load_by_user_id(other_user_id)
-            if device is not None:
-                sender_name_parts: list[str] = []
-                if user.profile is not None:
-                    sender_name_parts.append(user.profile.first_name)
-                    if user.profile.last_name:
-                        sender_name_parts.append(user.profile.last_name)
-                sender_name = " ".join(sender_name_parts) if sender_name_parts else "New message"
-                await self.notification_service.send_notification(
-                    identifier=device.device_id,
-                    title=f"Message from {sender_name}",
-                    body=text,
-                )
-        except Exception:
-            # Notification failures should not break business flow
-            pass
+        device = await self.notification_device_data_gateway.load_by_user_id(other_user_id)
+        if device is not None:
+            sender_name_parts: list[str] = []
+            if user.profile is not None:
+                sender_name_parts.append(user.profile.first_name)
+                if user.profile.last_name:
+                    sender_name_parts.append(user.profile.last_name)
+            sender_name = " ".join(sender_name_parts) if sender_name_parts else "New message"
+            await self.notification_service.send_notification(
+                identifier=device.device_id,
+                title=f"Message from {sender_name}",
+                body=text,
+            )
 
         return ChatMessageItem(
             message_id=message.id,
