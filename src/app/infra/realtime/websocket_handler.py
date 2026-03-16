@@ -54,7 +54,7 @@ async def _authenticate_websocket_user(
     return user
 
 
-@websocket(path="/ws/chat_stream")
+@websocket(path="/chat/stream")
 @inject_websocket
 async def chat_websocket_handler(
     socket: WebSocket[Any, Any, Any],
