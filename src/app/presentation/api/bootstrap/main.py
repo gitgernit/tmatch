@@ -2,6 +2,7 @@ import asyncio
 import sys
 
 import firebase_admin
+import structlog
 import uvicorn
 from dishka import AsyncContainer
 from dishka.integrations.litestar import setup_dishka
@@ -12,6 +13,7 @@ from litestar.contrib.opentelemetry import OpenTelemetryConfig, OpenTelemetryPlu
 from litestar.openapi import OpenAPIConfig
 from litestar.openapi.spec import Components
 from litestar.openapi.spec.security_scheme import SecurityScheme
+from litestar.types import Scope
 
 from app.infra.logging.structlog import configure_logging
 from app.infra.observability.opentelemetry.instrumentation.tracing import setup_tracing
@@ -34,6 +36,11 @@ from app.presentation.api.routes.preview.router import router as preview_router
 from app.presentation.api.routes.profile.router import router as profile_router
 from app.presentation.api.routes.recommendations.router import router as recommendations_router
 from app.presentation.api.routes.targeting.router import router as targeting_router
+
+
+async def after_exception_handler(exc: Exception, scope: Scope) -> None:
+    logger = structlog.get_logger("after_exception")
+    logger.exception("Unhandled exception", exc_info=exc)
 
 
 def create_app(
@@ -73,6 +80,7 @@ def create_app(
             chats_router,
         ],
         middleware=[metrics_middleware],
+        after_exception=after_exception_handler,
         plugins=[OpenTelemetryPlugin(config=litestar_otel_config)],
         openapi_config=openapi_config,
     )
