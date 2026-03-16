@@ -24,7 +24,7 @@ class DefaultChatDataGateway(ChatDataGateway):
             .where(chat_table.c.deleted_at.is_(None))
         )
         result = await self._session.execute(stmt)
-        row = result.scalar_one_or_none()
+        row = result.fetchone()
         if row is None:
             return None
         return Chat(
@@ -39,7 +39,7 @@ class DefaultChatDataGateway(ChatDataGateway):
     async def load_chat_by_id(self, chat_id: ChatId) -> Chat | None:
         stmt = select(chat_table).where(chat_table.c.id == chat_id).where(chat_table.c.deleted_at.is_(None))
         result = await self._session.execute(stmt)
-        row = result.scalar_one_or_none()
+        row = result.fetchone()
         if row is None:
             return None
         return Chat(
