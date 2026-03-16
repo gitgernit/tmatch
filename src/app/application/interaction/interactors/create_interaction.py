@@ -47,12 +47,12 @@ class CreateInteractionInteractor:
             action=action,
             ml_recommendation_id=ml_recommendation_id,
         )
-        payload = {"ml_recommendation_id": ml_recommendation_id} if ml_recommendation_id else {}
         audit_event = AuditEvent.factory(
             event_type=AuditEventType.INTERACTION_CREATED,
             actor_user_id=user.id,
             target_user_id=candidate_user_id,
-            payload=payload,
+            payload={"action": action.value},
+            ml_recommendation_id=ml_recommendation_id,
         )
         await self.unit_of_work.add(interaction)
         await self.unit_of_work.add(audit_event)

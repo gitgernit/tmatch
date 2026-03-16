@@ -200,6 +200,7 @@ audit_event_table: Final = Table(
     Column("event_type", Enum(AuditEventType, name="audit_event_type"), nullable=False),
     Column("actor_user_id", UUID, ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
     Column("target_user_id", UUID, ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
+    Column("ml_recommendation_id", String, nullable=True),
     Column("payload", JSONB, nullable=True),
     Column("sent_to_ml", Boolean, nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
