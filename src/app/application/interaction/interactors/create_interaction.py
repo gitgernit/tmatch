@@ -78,11 +78,10 @@ class CreateInteractionInteractor:
             )
 
     async def _handle_like(self, actor_id: UserId, candidate_user_id: UserId) -> None:
-        await self._send_like_notifications(candidate_user_id=candidate_user_id)
-
         match_user_ids = await self.match_data_gateway.list_active_match_user_ids(actor_id)
         is_match_active = candidate_user_id in match_user_ids
         if not is_match_active:
+            await self._send_like_notifications(candidate_user_id=candidate_user_id)
             return
 
         existing_chat = await self.chat_data_gateway.load_by_users(actor_id, candidate_user_id)
