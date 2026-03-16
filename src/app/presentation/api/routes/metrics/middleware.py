@@ -28,11 +28,6 @@ def metrics_middleware(app: ASGIApp) -> ASGIApp:
 
         try:
             await app(scope, receive, send_wrapper)
-        except Exception as exc:
-            logger.exception("Request failed", path=path, method=method, exc_info=exc)
-            if not status:
-                status.append(500)
-            raise
         finally:
             duration = time.perf_counter() - start
             status_code = status[0] if status else 0

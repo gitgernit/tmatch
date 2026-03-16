@@ -1,6 +1,6 @@
 from typing import override
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.notification_device.data_gateway import NotificationDeviceDataGateway
@@ -38,3 +38,8 @@ class DefaultNotificationDeviceDataGateway(NotificationDeviceDataGateway):
         result = await self._session.execute(statement)
         row = result.scalar_one_or_none()
         return self._notification_device_mapper.to_entity(row) if row is not None else None
+
+    @override
+    async def delete_by_device_id(self, device_id: str) -> None:
+        statement = delete(notification_device_table).where(notification_device_table.c.device_id == device_id)
+        await self._session.execute(statement)

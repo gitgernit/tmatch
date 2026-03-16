@@ -21,6 +21,10 @@ class RegisterNotificationDeviceInteractor:
     async def execute(self, request: RegisterNotificationDeviceRequest) -> None:
         current_user = await self.identity_provider.get_current_user()
 
+        # Один и тот же physical-девайс (device_id) должен быть привязан только к одному аккаунту.
+        # Перед регистрацией удаляем все старые записи с этим токеном.
+        await self.notification_device_data_gateway.delete_by_device_id(request.device_id)
+
         existing_device = await self.notification_device_data_gateway.load_by_user_id_and_device_id(
             user_id=current_user.id,
             device_id=request.device_id,

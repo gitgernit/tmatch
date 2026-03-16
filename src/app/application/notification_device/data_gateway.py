@@ -17,3 +17,7 @@ class NotificationDeviceDataGateway(Protocol):
         device_id: str,
     ) -> NotificationDevice | None:
         raise NotImplementedError
+
+    @abstractmethod
+    async def delete_by_device_id(self, device_id: str) -> None:
+        raise NotImplementedError

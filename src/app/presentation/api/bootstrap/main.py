@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from firebase_admin import credentials
 from litestar import Litestar
 from litestar.contrib.opentelemetry import OpenTelemetryConfig, OpenTelemetryPlugin
+from litestar.exceptions import HTTPException
 from litestar.openapi import OpenAPIConfig
 from litestar.openapi.spec import Components
 from litestar.openapi.spec.security_scheme import SecurityScheme
@@ -39,6 +40,8 @@ from app.presentation.api.routes.targeting.router import router as targeting_rou
 
 
 def after_exception_handler(exc: Exception, scope: Scope) -> None:  # noqa: ARG001
+    if isinstance(exc, HTTPException):
+        return
     logger = structlog.get_logger("after_exception")
     logger.exception("Unhandled exception", exc_info=exc)
 
