@@ -30,6 +30,7 @@ class WebSocketChatConsumer(MessageConsumer):
             **asdict(message),
         }
         await self._websocket.send_json(payload)
+        logger.info("websocket chat message delivered", message=message)
 
 
 async def _authenticate_websocket_user(
@@ -85,6 +86,7 @@ async def chat_websocket_handler(
             await socket.close(code=WS_1008_POLICY_VIOLATION)
             return
 
+        logger.info("websocket successfully authenticated", user_id=user.id)
         consumer = WebSocketChatConsumer(socket, str(user.id))
         messaging_service.register(user.id, consumer)
 

@@ -1,10 +1,14 @@
 import asyncio
 from collections import defaultdict
 from typing import override
+import structlog
 
 from app.application.chat.dto import ChatMessageItem
 from app.application.common.messaging.service import MessageConsumer, MessagingService
 from app.domain.user.entity import UserId
+
+
+logger = structlog.get_logger(__name__)
 
 
 class InMemoryMessagingService(MessagingService):
@@ -22,6 +26,7 @@ class InMemoryMessagingService(MessagingService):
                 await consumer.deliver(message)
             except Exception:  # noqa: BLE001
                 # На ошибках доставки просто отписываем консьюмера.
+                logger.info("delivery error, unregistering user", user_id=for_user)
                 await self._unregister_safely(for_user, consumer)
 
     @override
