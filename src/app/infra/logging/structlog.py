@@ -1,7 +1,23 @@
 import logging
+from collections.abc import MutableMapping
+from typing import Any
 
 import structlog.processors
+from opentelemetry.trace import get_current_span
 from structlog.types import Processor
+
+
+def add_trace_id_processor(
+    _logger: object,
+    _method_name: str,
+    event_dict: MutableMapping[str, Any],
+) -> MutableMapping[str, Any]:
+    span = get_current_span()
+    ctx = span.get_span_context()
+    if ctx.is_valid:
+        event_dict["trace_id"] = format(ctx.trace_id, "032x")
+        event_dict["span_id"] = format(ctx.span_id, "016x")
+    return event_dict
 
 
 async def build_processors() -> list[Processor]:
@@ -10,6 +26,7 @@ async def build_processors() -> list[Processor]:
     processors: list[Processor] = [
         structlog.processors.add_log_level,
         timestamp_processor,
+        add_trace_id_processor,
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
         structlog.processors.UnicodeDecoder(),
