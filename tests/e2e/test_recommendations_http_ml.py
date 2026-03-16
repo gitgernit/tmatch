@@ -17,7 +17,7 @@ from app.domain.user.value_objects import Gender
 from tests.integration.di.identity_provider import MockIdentityProvider  # noqa: TC001
 
 
-async def test_recommendations_with_http_ml_provider_for_user_absent_in_dataset(
+async def test_recommendations_with_http_ml_provider_for_user_absent_in_dataset_e2e(
     ml_http_container: AsyncContainer,
     ml_http_identity_provider: IdentityProvider,
     test_run_suffix: str,
@@ -62,3 +62,4 @@ async def test_recommendations_with_http_ml_provider_for_user_absent_in_dataset(
         assert item.ml_recommendation_id
         assert item.candidate_user_id
         assert item.reasons
+

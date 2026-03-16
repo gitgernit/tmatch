@@ -5,9 +5,13 @@ from dishka.integrations.litestar import FromDishka
 from litestar import WebSocket, websocket
 from litestar.status_codes import WS_1008_POLICY_VIOLATION
 
+from app.application.access_token.cryptographer import AccessTokenCryptographer
+from app.application.access_token.data_gateway import AccessTokenDataGateway
+from app.application.auth_identity.errors import UserUnauthorizedError
 from app.application.chat.dto import ChatMessageItem
-from app.application.common.identity_provider import IdentityProvider
 from app.application.common.messaging.service import MessageConsumer, MessagingService
+from app.application.user.data_gateway import UserDataGateway
+from app.domain.user.entity import User
 
 
 class WebSocketChatConsumer(MessageConsumer):
@@ -24,26 +28,58 @@ class WebSocketChatConsumer(MessageConsumer):
         await self._websocket.send_json(payload)
 
 
+async def _authenticate_websocket_user(
+    token: str,
+    user_data_gateway: UserDataGateway,
+    access_token_data_gateway: AccessTokenDataGateway,
+    access_token_cryptographer: AccessTokenCryptographer,
+) -> User:
+    access_token_id = access_token_cryptographer.decrypto(token)
+    if access_token_id is None:
+        raise UserUnauthorizedError
+
+    access_token = await access_token_data_gateway.load_with_id(access_token_id)
+    if access_token is None:
+        raise UserUnauthorizedError
+
+    access_token.ensure_not_expired()
+
+    user = await user_data_gateway.load_with_id(access_token.user_id)
+    if user is None:
+        raise UserUnauthorizedError
+
+    return user
+
+
 @websocket(path="/chat/stream")
 async def chat_websocket_handler(
     socket: WebSocket[Any, Any, Any],
-    identity_provider: FromDishka[IdentityProvider],
     messaging_service: FromDishka[MessagingService],
+    user_data_gateway: FromDishka[UserDataGateway],
+    access_token_data_gateway: FromDishka[AccessTokenDataGateway],
+    access_token_cryptographer: FromDishka[AccessTokenCryptographer],
 ) -> None:
     token = socket.query_params.get("token")
     if not token:
         await socket.close(code=WS_1008_POLICY_VIOLATION)
         return
 
-    # Переиспользуем существующий IdentityProvider: он уже знает, как работать с токенами.
-    user = await identity_provider.get_current_user()
+    try:
+        user = await _authenticate_websocket_user(
+            token=token,
+            user_data_gateway=user_data_gateway,
+            access_token_data_gateway=access_token_data_gateway,
+            access_token_cryptographer=access_token_cryptographer,
+        )
+    except UserUnauthorizedError:
+        await socket.close(code=WS_1008_POLICY_VIOLATION)
+        return
 
     await socket.accept()
     consumer = WebSocketChatConsumer(socket, str(user.id))
     messaging_service.register(user.id, consumer)
 
     try:
-        # На MVP сервер только пушит сообщения, клиент может посылать ping/pong по своему усмотрению.
         while True:
             _ = await socket.receive_json()
     finally:

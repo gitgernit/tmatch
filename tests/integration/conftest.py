@@ -1,6 +1,5 @@
 import uuid
 from collections.abc import AsyncGenerator
-from os import getenv
 from typing import cast
 
 import pytest
@@ -9,7 +8,7 @@ from dotenv import load_dotenv
 
 from app.application.common.identity_provider import IdentityProvider
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
-from tests.integration.di.container import build_http_ml_test_container, build_test_container
+from tests.integration.di.container import build_test_container
 
 load_dotenv(override=False)
 load_dotenv(".env.local", override=False)
@@ -42,18 +41,3 @@ async def test_container(bootstrap_db: None) -> AsyncGenerator[AsyncContainer, N
 @pytest.fixture
 async def test_identity_provider(test_container: AsyncContainer) -> IdentityProvider:
     return cast("IdentityProvider", await test_container.get(IdentityProvider))
-
-
-@pytest.fixture
-async def ml_http_container(bootstrap_db: None) -> AsyncGenerator[AsyncContainer, None]:  # noqa: ARG001
-    base_url = getenv("ML_TEST_BASE_URL") or getenv("ML_BASE_URL") or "http://127.0.0.1:8080"
-    container = build_http_ml_test_container(
-        base_url=base_url,
-    )
-    async with container() as request_scope:
-        yield request_scope
-
-
-@pytest.fixture
-async def ml_http_identity_provider(ml_http_container: AsyncContainer) -> IdentityProvider:
-    return cast("IdentityProvider", await ml_http_container.get(IdentityProvider))

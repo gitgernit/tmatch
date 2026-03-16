@@ -1,7 +1,9 @@
 from dishka import STRICT_VALIDATION, AsyncContainer, BaseScope, Provider, Scope, make_async_container, provide
 
 from app.application.auth_identity.di.providers import providers as auth_identity_providers
+from app.application.chat.di.providers import providers as chat_providers
 from app.application.common.identity_provider import IdentityProvider
+from app.application.common.messaging.di.providers import providers as messaging_providers
 from app.application.dating_profile.di.providers import providers as dating_profile_providers
 from app.application.incoming_likes.di.providers import providers as incoming_likes_providers
 from app.application.interaction.di.providers import providers as interaction_providers
@@ -65,6 +67,7 @@ def build_test_container() -> AsyncContainer:
         *notification_providers,
         MockIdentityProviderProvider(),
         *notification_device_providers,
+        *messaging_providers,
         *profile_providers,
         *recommendation_providers,
         *match_providers,
@@ -72,6 +75,7 @@ def build_test_container() -> AsyncContainer:
         *targeting_providers,
         *dating_profile_providers,
         *interaction_providers,
+        *chat_providers,
         validation_settings=STRICT_VALIDATION,
     )
 
@@ -89,6 +93,7 @@ def build_http_ml_test_container(*, base_url: str) -> AsyncContainer:
         *notification_providers,
         MockIdentityProviderProvider(),
         *notification_device_providers,
+        *messaging_providers,
         *profile_providers,
         *recommendation_providers,
         *match_providers,
@@ -96,5 +101,6 @@ def build_http_ml_test_container(*, base_url: str) -> AsyncContainer:
         *targeting_providers,
         *dating_profile_providers,
         *interaction_providers,
+        *chat_providers,
         validation_settings=STRICT_VALIDATION,
     )
