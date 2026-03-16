@@ -16,4 +16,3 @@ class ChatNoActiveMatchError(Exception):
 
 class ChatValidationError(Exception):
     pass
-

@@ -19,4 +19,3 @@ class MessageRow:
     text: Mapped[str]
     created_at: Mapped[datetime]
     deleted_at: Mapped[datetime | None]
-

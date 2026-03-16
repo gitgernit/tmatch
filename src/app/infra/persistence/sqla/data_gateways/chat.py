@@ -37,11 +37,7 @@ class DefaultChatDataGateway(ChatDataGateway):
 
     @override
     async def load_chat_by_id(self, chat_id: ChatId) -> Chat | None:
-        stmt = (
-            select(chat_table)
-            .where(chat_table.c.id == chat_id)
-            .where(chat_table.c.deleted_at.is_(None))
-        )
+        stmt = select(chat_table).where(chat_table.c.id == chat_id).where(chat_table.c.deleted_at.is_(None))
         result = await self._session.execute(stmt)
         row = result.scalar_one_or_none()
         if row is None:
@@ -60,8 +56,7 @@ class DefaultChatDataGateway(ChatDataGateway):
             select(chat_table)
             .where(chat_table.c.deleted_at.is_(None))
             .where(
-                (chat_table.c.user_a_id == user_id)
-                | (chat_table.c.user_b_id == user_id),
+                (chat_table.c.user_a_id == user_id) | (chat_table.c.user_b_id == user_id),
             )
             .order_by(chat_table.c.created_at.desc())
         )
@@ -87,9 +82,7 @@ class DefaultChatDataGateway(ChatDataGateway):
         before_message_id: MessageId | None = None,
     ) -> list[Message]:
         stmt = (
-            select(message_table)
-            .where(message_table.c.chat_id == chat_id)
-            .where(message_table.c.deleted_at.is_(None))
+            select(message_table).where(message_table.c.chat_id == chat_id).where(message_table.c.deleted_at.is_(None))
         )
         if before_message_id is not None:
             stmt = stmt.where(message_table.c.id < before_message_id)
@@ -110,4 +103,3 @@ class DefaultChatDataGateway(ChatDataGateway):
         ]
         messages.reverse()
         return messages
-

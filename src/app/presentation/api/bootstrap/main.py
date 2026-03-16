@@ -19,6 +19,7 @@ from app.presentation.api.bootstrap.di.container import build_container
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
 from app.presentation.api.config.models import FirebaseConfig, OpentelemetryConfig, ServerConfig
 from app.presentation.api.routes.auth.router import router as auth_router
+from app.presentation.api.routes.chats.router import router as chats_router
 from app.presentation.api.routes.dating_profile.router import (
     router as dating_profile_router,
 )
@@ -33,7 +34,6 @@ from app.presentation.api.routes.preview.router import router as preview_router
 from app.presentation.api.routes.profile.router import router as profile_router
 from app.presentation.api.routes.recommendations.router import router as recommendations_router
 from app.presentation.api.routes.targeting.router import router as targeting_router
-from app.presentation.api.routes.chats.router import router as chats_router
 
 
 def create_app(

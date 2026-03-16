@@ -39,4 +39,3 @@ class GetMyChatsInteractor:
                 ),
             )
         return ChatListResult(items=items)
-

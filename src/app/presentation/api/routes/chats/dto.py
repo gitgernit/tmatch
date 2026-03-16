@@ -30,4 +30,3 @@ class ChatMessagesResponse(BaseModel):
 
 class SendMessageRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=4000)
-

@@ -8,8 +8,8 @@ from app.infra.persistence.sqla.bootstrapper import SqlaPersistenceBootstrapper
 from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessTokenDataGateway
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
 from app.infra.persistence.sqla.data_gateways.blocked_pairs import DefaultBlockedPairsGateway
-from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
 from app.infra.persistence.sqla.data_gateways.chat import DefaultChatDataGateway
+from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
 from app.infra.persistence.sqla.data_gateways.incoming_likes import DefaultIncomingLikesDataGateway
 from app.infra.persistence.sqla.data_gateways.match import DefaultMatchDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
@@ -20,13 +20,13 @@ from app.infra.persistence.sqla.mappers import GlobalDataMapper
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
 from app.infra.persistence.sqla.mappers.audit_event_mapper import AuditEventMapper
 from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
+from app.infra.persistence.sqla.mappers.chat_mapper import ChatMapper, MessageMapper
 from app.infra.persistence.sqla.mappers.dating_profile_mapper import DatingProfileMapper
 from app.infra.persistence.sqla.mappers.interaction_mapper import InteractionMapper
 from app.infra.persistence.sqla.mappers.notification_device_mapper import NotificationDeviceMapper
 from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
 from app.infra.persistence.sqla.mappers.targeting_mapper import TargetingMapper
 from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
-from app.infra.persistence.sqla.mappers.chat_mapper import ChatMapper, MessageMapper
 from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper

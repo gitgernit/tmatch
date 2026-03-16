@@ -45,4 +45,3 @@ class GetChatMessagesInteractor:
             for m in messages
         ]
         return ChatMessagesResult(items=items)
-

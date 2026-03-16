@@ -86,4 +86,3 @@ class SendChatMessageInteractor:
             text=message.text,
             created_at=message.created_at,
         )
-

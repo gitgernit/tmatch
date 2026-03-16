@@ -142,4 +142,3 @@ router = DishkaRouter(
     route_handlers=[get_my_chats, get_chat_messages, send_chat_message],
     tags=["chats"],
 )
-

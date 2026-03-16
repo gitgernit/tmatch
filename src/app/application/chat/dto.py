@@ -31,4 +31,3 @@ class ChatMessageItem:
 @dto
 class ChatMessagesResult:
     items: list[ChatMessageItem]
-

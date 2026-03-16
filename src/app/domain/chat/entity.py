@@ -2,11 +2,10 @@ from datetime import UTC, datetime
 from typing import NewType, Self
 from uuid import UUID
 
-from uuid_utils import uuid7
+from uuid_utils.compat import uuid7
 
 from app.domain.common.entity import Entity, entity
 from app.domain.user.entity import UserId
-
 
 ChatId = NewType("ChatId", UUID)
 MessageId = NewType("MessageId", UUID)
@@ -49,4 +48,3 @@ class Message(Entity[MessageId]):
             text=text,
             created_at=datetime.now(tz=UTC),
         )
-

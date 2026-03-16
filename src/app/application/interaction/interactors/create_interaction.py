@@ -68,7 +68,7 @@ class CreateInteractionInteractor:
             created_at=interaction.created_at,
         )
 
-    async def _send_like_notifications(self, actor_id: UserId, candidate_user_id: UserId) -> None:
+    async def _send_like_notifications(self, candidate_user_id: UserId) -> None:
         candidate_device = await self.notification_device_data_gateway.load_by_user_id(candidate_user_id)
         if candidate_device is not None:
             await self.notification_service.send_notification(
@@ -78,12 +78,7 @@ class CreateInteractionInteractor:
             )
 
     async def _handle_like(self, actor_id: UserId, candidate_user_id: UserId) -> None:
-        """
-        Handle side-effects of a LIKE interaction:
-        - always send 'new like' notification (if device exists);
-        - if LIKE resulted in an active match: create chat (if needed) and send 'new match' notification.
-        """
-        await self._send_like_notifications(actor_id=actor_id, candidate_user_id=candidate_user_id)
+        await self._send_like_notifications(candidate_user_id=candidate_user_id)
 
         match_user_ids = await self.match_data_gateway.list_active_match_user_ids(actor_id)
         is_match_active = candidate_user_id in match_user_ids

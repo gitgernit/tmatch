@@ -16,4 +16,3 @@ class ChatInteractorProvider(Provider):
 providers = [
     ChatInteractorProvider(),
 ]
-

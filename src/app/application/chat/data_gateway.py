@@ -28,4 +28,3 @@ class ChatDataGateway(Protocol):
         before_message_id: MessageId | None = None,
     ) -> list[Message]:
         raise NotImplementedError
-
