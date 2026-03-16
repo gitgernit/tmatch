@@ -99,8 +99,11 @@ async def test_incoming_like_without_reply_appears_in_list(
     id_provider.set_user(user_a)
     incoming = await get_incoming.execute()
     assert len(incoming.items) == 1
-    assert incoming.items[0].liker_user_id == str(user_b_id)
-    assert incoming.items[0].candidate_card is not None
+    first = incoming.items[0]
+    assert first.liker_user_id == str(user_b_id)
+    assert first.candidate_card is not None
+    assert first.reasons is not None
+    assert len(first.reasons) > 0
 
 
 async def test_after_like_reply_user_disappears_from_incoming(

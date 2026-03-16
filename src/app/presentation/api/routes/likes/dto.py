@@ -32,6 +32,7 @@ class IncomingLikeCandidateCardResponse(BaseModel):
 class IncomingLikeItemResponse(BaseModel):
     liker_user_id: str
     candidate_card: IncomingLikeCandidateCardResponse | None
+    reasons: dict[str, float] | None = None
 
 
 class IncomingLikesResponse(BaseModel):

@@ -35,7 +35,11 @@ async def get_my_incoming_likes(
         card = item.candidate_card
         if card is None:
             items.append(
-                IncomingLikeItemResponse(liker_user_id=item.liker_user_id, candidate_card=None),
+                IncomingLikeItemResponse(
+                    liker_user_id=item.liker_user_id,
+                    candidate_card=None,
+                    reasons=item.reasons,
+                ),
             )
             continue
         profile_response: IncomingLikeCandidateProfileResponse | None = None
@@ -70,6 +74,7 @@ async def get_my_incoming_likes(
             IncomingLikeItemResponse(
                 liker_user_id=item.liker_user_id,
                 candidate_card=card_response,
+                reasons=item.reasons,
             ),
         )
     return IncomingLikesResponse(items=items)

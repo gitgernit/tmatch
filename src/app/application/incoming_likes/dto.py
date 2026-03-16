@@ -6,6 +6,7 @@ from app.application.recommendation.dto import RecommendationCandidateCardItem
 class IncomingLikeItem:
     liker_user_id: str
     candidate_card: RecommendationCandidateCardItem | None
+    reasons: dict[str, float] | None
 
 
 @dto

@@ -4,6 +4,7 @@ from app.application.dating_profile.data_gateway import DatingProfileDataGateway
 from app.application.incoming_likes.data_gateway import IncomingLikesDataGateway
 from app.application.incoming_likes.dto import IncomingLikeItem, IncomingLikesResult
 from app.application.interaction.blocked_pairs_gateway import BlockedPairsGateway
+from app.application.recommendation.data_gateway import RecommendationDataGateway
 from app.application.recommendation.dto import (
     RecommendationCandidateCardItem,
     RecommendationCandidateDatingProfileItem,
@@ -57,6 +58,7 @@ class GetMyIncomingLikesInteractor:
     blocked_pairs_gateway: BlockedPairsGateway
     user_data_gateway: UserDataGateway
     dating_profile_data_gateway: DatingProfileDataGateway
+    recommendation_data_gateway: RecommendationDataGateway
 
     async def execute(self) -> IncomingLikesResult:
         user = await self.identity_provider.get_current_user()
@@ -77,10 +79,17 @@ class GetMyIncomingLikesInteractor:
                 continue
             dp = dating_profiles.get(liker_user_id)
             card = _build_candidate_card(candidate, dp)
+
+            rec = await self.recommendation_data_gateway.load_latest_for_pair(
+                user_id=user.id,
+                candidate_user_id=liker_user_id,
+            )
+
             items.append(
                 IncomingLikeItem(
                     liker_user_id=str(liker_user_id),
                     candidate_card=card,
+                    reasons=rec.reasons if rec is not None else None,
                 ),
             )
         return IncomingLikesResult(items=items)
