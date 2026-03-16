@@ -42,6 +42,8 @@ MAX_USERS_TO_LOAD = 1_000_000
 logger = logging.getLogger(__name__)
 DEFAULT_REGION = "Moscow"
 DEFAULT_PROFILE_PHOTO_URL = "https://i.pinimg.com/736x/66/20/9e/66209e958f35bea74dc48b0e3c79595f.jpg"
+AVATAR_URL_MALE = "https://thumbs.dreamstime.com/b/man-icon-vector-person-symbol-pictogram-illustration-glyph-97085462.jpg"
+AVATAR_URL_FEMALE = "https://www.allsigns.co.uk/wp-content/uploads/uploads_img/2016/05/GE29a.jpg"
 DEFAULT_PASSWORD = "password"  # noqa: S105
 EMAIL_DOMAIN = "example.com"
 AUTH_IDENTITY_NAMESPACE = UUID("f80fbbf2-efc6-4a09-866f-8367f8f51352")
@@ -84,13 +86,14 @@ def _calculate_age(birth_date: date) -> int:
     return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
 
 
-def _build_fake_profile_fields(user_id: UUID) -> tuple[str, str, date, Gender]:
+def _build_fake_profile_fields(user_id: UUID) -> tuple[str, str, date, Gender, str]:
     fake = _build_faker_for_user(user_id)
-    first_name = fake.first_name()
+    gender = Gender.MALE if user_id.int % 2 == 0 else Gender.FEMALE
+    first_name = fake.first_name_male() if gender == Gender.MALE else fake.first_name_female()
     last_name = fake.last_name()
     birth_date = fake.date_of_birth(minimum_age=18, maximum_age=45)
-    gender = Gender.MALE if user_id.int % 2 == 0 else Gender.FEMALE
-    return first_name, last_name, birth_date, gender
+    avatar_url = AVATAR_URL_MALE if gender == Gender.MALE else AVATAR_URL_FEMALE
+    return first_name, last_name, birth_date, gender, avatar_url
 
 
 def _extract_uuid(raw_row: dict[str, str]) -> UUID | None:
@@ -135,7 +138,7 @@ def _insert_profiles_batch(engine: Engine, user_ids: list[UUID]) -> int:
     now = datetime.now(tz=UTC)
     rows: list[dict[str, object]] = []
     for user_id in user_ids:
-        first_name, last_name, birth_date, gender = _build_fake_profile_fields(user_id)
+        first_name, last_name, birth_date, gender, avatar_url = _build_fake_profile_fields(user_id)
         rows.append(
             {
                 "user_id": user_id,
@@ -144,7 +147,7 @@ def _insert_profiles_batch(engine: Engine, user_ids: list[UUID]) -> int:
                 "birth_date": birth_date,
                 "gender": gender,
                 "region": DEFAULT_REGION,
-                "avatar_url": None,
+                "avatar_url": avatar_url,
                 "created_at": now,
                 "updated_at": now,
             },
@@ -199,7 +202,7 @@ def _insert_dating_photos_batch(engine: Engine, inserted_profiles: list[tuple[UU
 
 
 def _build_auth_identity_payload(user_id: UUID, password_hasher: FernetPasswordService) -> dict[str, object]:
-    first_name, last_name, _, _ = _build_fake_profile_fields(user_id)
+    first_name, last_name, _, _, _ = _build_fake_profile_fields(user_id)
     local_part = _name_to_email_local(first_name, last_name)
     identifier = f"{local_part}@{EMAIL_DOMAIN}"
     return {
@@ -218,7 +221,7 @@ def _insert_targeting_batch(engine: Engine, user_ids: list[UUID]) -> int:
     now = datetime.now(tz=UTC)
     rows: list[dict[str, object]] = []
     for user_id in user_ids:
-        _, _, birth_date, _ = _build_fake_profile_fields(user_id)
+        _, _, birth_date, _, _ = _build_fake_profile_fields(user_id)
         age = _calculate_age(birth_date)
         rows.append(
             {
