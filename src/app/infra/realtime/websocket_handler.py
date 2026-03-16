@@ -1,8 +1,8 @@
 from dataclasses import asdict
 from typing import Any, override
 
-from dishka.integrations.litestar import FromDishka
 import structlog
+from dishka.integrations.litestar import FromDishka
 from litestar import WebSocket, websocket
 from litestar.status_codes import WS_1008_POLICY_VIOLATION
 
@@ -13,7 +13,6 @@ from app.application.chat.dto import ChatMessageItem
 from app.application.common.messaging.service import MessageConsumer, MessagingService
 from app.application.user.data_gateway import UserDataGateway
 from app.domain.user.entity import User
-
 
 logger = structlog.get_logger(__name__)
 
