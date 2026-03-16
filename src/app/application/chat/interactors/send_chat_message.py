@@ -9,6 +9,7 @@ from app.application.chat.errors import (
 )
 from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
+from app.application.common.messaging.service import MessagingService
 from app.application.common.notifications.service import NotificationService, NotificationType
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.interaction.blocked_pairs_gateway import BlockedPairsGateway
@@ -33,6 +34,7 @@ class SendChatMessageInteractor:
     blocked_pairs_gateway: BlockedPairsGateway
     notification_device_data_gateway: NotificationDeviceDataGateway
     notification_service: NotificationService
+    messaging_service: MessagingService
 
     async def execute(
         self,
@@ -65,6 +67,16 @@ class SendChatMessageInteractor:
         await self.unit_of_work.add(message)
         await self.unit_of_work.commit()
 
+        chat_message_item = ChatMessageItem(
+            message_id=message.id,
+            chat_id=message.chat_id,
+            sender_user_id=message.sender_user_id,
+            text=message.text,
+            created_at=message.created_at,
+        )
+
+        await self.messaging_service.publish(for_user=other_user_id, message=chat_message_item)
+
         device = await self.notification_device_data_gateway.load_by_user_id(other_user_id)
         if device is not None:
             sender_name_parts: list[str] = []
@@ -84,10 +96,4 @@ class SendChatMessageInteractor:
                 },
             )
 
-        return ChatMessageItem(
-            message_id=message.id,
-            chat_id=message.chat_id,
-            sender_user_id=message.sender_user_id,
-            text=message.text,
-            created_at=message.created_at,
-        )
+        return chat_message_item

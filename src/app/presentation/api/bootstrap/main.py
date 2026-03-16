@@ -18,6 +18,7 @@ from litestar.types import Scope
 
 from app.infra.logging.structlog import configure_logging
 from app.infra.observability.opentelemetry.instrumentation.tracing import setup_tracing
+from app.infra.realtime.websocket_handler import chat_websocket_handler
 from app.presentation.api.bootstrap.di.container import build_container
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
 from app.presentation.api.config.models import FirebaseConfig, OpentelemetryConfig, ServerConfig
@@ -81,6 +82,7 @@ def create_app(
             metrics_router,
             notifications_router,
             chats_router,
+            chat_websocket_handler,
         ],
         middleware=[metrics_middleware],
         after_exception=[after_exception_handler],
