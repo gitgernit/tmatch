@@ -41,7 +41,6 @@ BATCH_SIZE = 1_000
 MAX_USERS_TO_LOAD = 1_000_000
 logger = logging.getLogger(__name__)
 DEFAULT_REGION = "Moscow"
-DEFAULT_PROFILE_PHOTO_URL = "https://i.pinimg.com/736x/66/20/9e/66209e958f35bea74dc48b0e3c79595f.jpg"
 AVATAR_URL_MALE = "https://thumbs.dreamstime.com/b/man-icon-vector-person-symbol-pictogram-illustration-glyph-97085462.jpg"
 AVATAR_URL_FEMALE = "https://www.allsigns.co.uk/wp-content/uploads/uploads_img/2016/05/GE29a.jpg"
 DEFAULT_PASSWORD = "password"  # noqa: S105
@@ -183,6 +182,10 @@ def _insert_dating_profiles_batch(engine: Engine, user_ids: list[UUID]) -> list[
     ]
 
 
+def _photo_url_for_user(user_id: UUID) -> str:
+    return AVATAR_URL_MALE if user_id.int % 2 == 0 else AVATAR_URL_FEMALE
+
+
 def _insert_dating_photos_batch(engine: Engine, inserted_profiles: list[tuple[UUID, UUID]]) -> int:
     if not inserted_profiles:
         return 0
@@ -190,10 +193,10 @@ def _insert_dating_photos_batch(engine: Engine, inserted_profiles: list[tuple[UU
         {
             "id": uuid4(),
             "dating_profile_id": dating_profile_id,
-            "url": DEFAULT_PROFILE_PHOTO_URL,
+            "url": _photo_url_for_user(user_id),
             "position": 0,
         }
-        for _, dating_profile_id in inserted_profiles
+        for user_id, dating_profile_id in inserted_profiles
     ]
     stmt = insert(dating_profile_photo_table).values(rows).returning(dating_profile_photo_table.c.id)
     with engine.begin() as conn:
