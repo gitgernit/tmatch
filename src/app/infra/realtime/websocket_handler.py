@@ -63,7 +63,7 @@ async def chat_websocket_handler(
     access_token_cryptographer: FromDishka[AccessTokenCryptographer],
 ) -> None:
     token = socket.query_params.get("token")
-    print(token)
+    print(token)  # noqa
     logger.info("token.received", token=token)
     raise RuntimeError(token)
     if not token:  # type: ignore[unreachable]
