@@ -19,6 +19,12 @@ class FCMNotificationService(NotificationService):
         )
         try:
             await asyncio.to_thread(messaging.send, message)
+            logger.info(
+                "fcm_notification_sent",
+                identifier=identifier,
+                title=title,
+                body=body,
+            )
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "fcm_notification_send_failed",
