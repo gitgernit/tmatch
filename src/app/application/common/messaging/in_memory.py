@@ -1,12 +1,12 @@
 import asyncio
 from collections import defaultdict
 from typing import override
+
 import structlog
 
 from app.application.chat.dto import ChatMessageItem
 from app.application.common.messaging.service import MessageConsumer, MessagingService
 from app.domain.user.entity import UserId
-
 
 logger = structlog.get_logger(__name__)
 
