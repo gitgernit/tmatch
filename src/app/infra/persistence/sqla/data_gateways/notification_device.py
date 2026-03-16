@@ -17,6 +17,13 @@ class DefaultNotificationDeviceDataGateway(NotificationDeviceDataGateway):
         self._notification_device_mapper = notification_device_mapper
 
     @override
+    async def delete_by_user_id(self, user_id: UserId) -> None:
+        statement = delete(notification_device_table).where(
+            notification_device_table.c.user_id == user_id,
+        )
+        await self._session.execute(statement)
+
+    @override
     async def load_by_user_id(self, user_id: UserId) -> NotificationDevice | None:
         statement = select(NotificationDeviceRow).where(
             notification_device_table.c.user_id == user_id,

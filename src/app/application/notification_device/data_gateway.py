@@ -7,6 +7,10 @@ from app.domain.user.entity import UserId
 
 class NotificationDeviceDataGateway(Protocol):
     @abstractmethod
+    async def delete_by_user_id(self, user_id: UserId) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
     async def load_by_user_id(self, user_id: UserId) -> NotificationDevice | None:
         raise NotImplementedError
 

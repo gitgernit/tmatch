@@ -95,7 +95,7 @@ notification_device_table: Final = Table(
     Column("device_id", String, nullable=False),
     Column("deleted_at", DateTime(timezone=True)),
     Column("created_at", DateTime(timezone=True), nullable=False),
-    UniqueConstraint("user_id", "device_id", name="uq_notification_devices_user_device"),
+    UniqueConstraint("user_id", name="uq_notification_devices_user_id"),
 )
 
 recommendation_table: Final = Table(
