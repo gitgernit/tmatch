@@ -63,8 +63,10 @@ async def chat_websocket_handler(
     access_token_cryptographer: FromDishka[AccessTokenCryptographer],
 ) -> None:
     token = socket.query_params.get("token")
-    logger.info("token received", token=token)
-    if not token:
+    print(token)
+    logger.info("token.received", token=token)
+    raise RuntimeError(token)
+    if not token:  # type: ignore[unreachable]
         await socket.close(code=WS_1008_POLICY_VIOLATION)
         return
 
