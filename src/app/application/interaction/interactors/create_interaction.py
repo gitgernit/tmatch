@@ -1,7 +1,7 @@
 from app.application.chat.data_gateway import ChatDataGateway
 from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
-from app.application.common.notifications.service import NotificationService
+from app.application.common.notifications.service import NotificationService, NotificationType
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.interaction.dto import InteractionResult
 from app.application.interaction.errors import CandidateNotFoundError, SelfInteractionError
@@ -75,6 +75,10 @@ class CreateInteractionInteractor:
                 identifier=candidate_device.device_id,
                 title="New like",
                 body="You have a new like.",
+                notification_type=NotificationType.LIKE,
+                data={
+                    "candidate_user_id": str(candidate_user_id),
+                },
             )
 
     async def _handle_like(self, actor_id: UserId, candidate_user_id: UserId) -> None:
@@ -96,4 +100,9 @@ class CreateInteractionInteractor:
                 identifier=candidate_match_device.device_id,
                 title="New match",
                 body="You have a new match.",
+                notification_type=NotificationType.MATCH,
+                data={
+                    "actor_user_id": str(actor_id),
+                    "candidate_user_id": str(candidate_user_id),
+                },
             )

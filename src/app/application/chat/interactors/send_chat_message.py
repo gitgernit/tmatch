@@ -9,7 +9,7 @@ from app.application.chat.errors import (
 )
 from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
-from app.application.common.notifications.service import NotificationService
+from app.application.common.notifications.service import NotificationService, NotificationType
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.interaction.blocked_pairs_gateway import BlockedPairsGateway
 from app.application.match.data_gateway import MatchDataGateway
@@ -77,6 +77,11 @@ class SendChatMessageInteractor:
                 identifier=device.device_id,
                 title=f"Message from {sender_name}",
                 body=text,
+                notification_type=NotificationType.MESSAGE,
+                data={
+                    "chat_id": str(chat.id),
+                    "sender_user_id": str(user.id),
+                },
             )
 
         return ChatMessageItem(

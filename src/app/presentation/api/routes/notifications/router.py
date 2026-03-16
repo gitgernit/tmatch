@@ -19,6 +19,7 @@ from app.application.notification_device.interactors.send_notification import (
 class SendNotificationBody(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     body: str = Field(..., min_length=1, max_length=500)
+    data: dict[str, str] | None = None
 
 
 class RegisterDeviceBody(BaseModel):
@@ -35,7 +36,13 @@ async def send_notification(
     interactor: FromDishka[SendNotificationInteractor],
 ) -> None:
     try:
-        await interactor.execute(SendNotificationRequest(title=data.title, body=data.body))
+        await interactor.execute(
+            SendNotificationRequest(
+                title=data.title,
+                body=data.body,
+                data=data.data,
+            ),
+        )
     except UserUnauthorizedError as error:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized") from error
     except NotificationDeviceNotFoundError as error:

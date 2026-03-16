@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from app.application.common.identity_provider import IdentityProvider
 from app.application.common.interactor import interactor
-from app.application.common.notifications.service import NotificationService
+from app.application.common.notifications.service import NotificationService, NotificationType
 from app.application.notification_device.data_gateway import NotificationDeviceDataGateway
 from app.application.notification_device.errors import NotificationDeviceNotFoundError
 
@@ -11,6 +11,7 @@ from app.application.notification_device.errors import NotificationDeviceNotFoun
 class SendNotificationRequest:
     title: str
     body: str
+    data: dict[str, str] | None = None
 
 
 @interactor
@@ -30,4 +31,6 @@ class SendNotificationInteractor:
             identifier=notification_device.device_id,
             title=request.title,
             body=request.body,
+            notification_type=NotificationType.GENERIC,
+            data=request.data,
         )
