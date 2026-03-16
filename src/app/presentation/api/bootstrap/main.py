@@ -33,6 +33,7 @@ from app.presentation.api.routes.preview.router import router as preview_router
 from app.presentation.api.routes.profile.router import router as profile_router
 from app.presentation.api.routes.recommendations.router import router as recommendations_router
 from app.presentation.api.routes.targeting.router import router as targeting_router
+from app.presentation.api.routes.chats.router import router as chats_router
 
 
 def create_app(
@@ -69,6 +70,7 @@ def create_app(
             interactions_router,
             metrics_router,
             notifications_router,
+            chats_router,
         ],
         middleware=[metrics_middleware],
         plugins=[OpenTelemetryPlugin(config=litestar_otel_config)],

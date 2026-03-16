@@ -4,6 +4,7 @@ from app.domain.common.entity import Entity
 from app.infra.persistence.sqla.mappers.access_token_mapper import AccessTokenMapper
 from app.infra.persistence.sqla.mappers.audit_event_mapper import AuditEventMapper
 from app.infra.persistence.sqla.mappers.auth_identity_mapper import AuthIdentityMapper
+from app.infra.persistence.sqla.mappers.chat_mapper import ChatMapper, MessageMapper
 from app.infra.persistence.sqla.mappers.dating_profile_mapper import DatingProfileMapper
 from app.infra.persistence.sqla.mappers.errors import MapperNotFoundError
 from app.infra.persistence.sqla.mappers.interaction_mapper import InteractionMapper
@@ -20,6 +21,8 @@ _Mapper = (
     | RecommendationMapper
     | TargetingMapper
     | DatingProfileMapper
+    | ChatMapper
+    | MessageMapper
     | InteractionMapper
     | AuditEventMapper
 )
@@ -35,6 +38,8 @@ class GlobalDataMapper:
         recommendation_mapper: RecommendationMapper,
         targeting_mapper: TargetingMapper,
         dating_profile_mapper: DatingProfileMapper,
+        chat_mapper: ChatMapper,
+        message_mapper: MessageMapper,
         interaction_mapper: InteractionMapper,
         audit_event_mapper: AuditEventMapper,
     ) -> None:
@@ -46,6 +51,8 @@ class GlobalDataMapper:
             recommendation_mapper,
             targeting_mapper,
             dating_profile_mapper,
+            chat_mapper,
+            message_mapper,
             interaction_mapper,
             audit_event_mapper,
         ]

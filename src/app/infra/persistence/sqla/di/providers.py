@@ -9,6 +9,7 @@ from app.infra.persistence.sqla.data_gateways.access_token import DefaultAccessT
 from app.infra.persistence.sqla.data_gateways.auth_identity import DefaultAuthIdentityDataGateway
 from app.infra.persistence.sqla.data_gateways.blocked_pairs import DefaultBlockedPairsGateway
 from app.infra.persistence.sqla.data_gateways.dating_profile import DefaultDatingProfileDataGateway
+from app.infra.persistence.sqla.data_gateways.chat import DefaultChatDataGateway
 from app.infra.persistence.sqla.data_gateways.incoming_likes import DefaultIncomingLikesDataGateway
 from app.infra.persistence.sqla.data_gateways.match import DefaultMatchDataGateway
 from app.infra.persistence.sqla.data_gateways.notification_device import DefaultNotificationDeviceDataGateway
@@ -25,6 +26,7 @@ from app.infra.persistence.sqla.mappers.notification_device_mapper import Notifi
 from app.infra.persistence.sqla.mappers.recommendation_mapper import RecommendationMapper
 from app.infra.persistence.sqla.mappers.targeting_mapper import TargetingMapper
 from app.infra.persistence.sqla.mappers.user_mapper import UserMapper
+from app.infra.persistence.sqla.mappers.chat_mapper import ChatMapper, MessageMapper
 from app.infra.persistence.sqla.readiness import SqlaReadinessChecker
 from app.infra.persistence.sqla.uow import DefaultUnitOfWork
 from app.presentation.api.bootstrap.persistence_bootstrapper import PersistenceBootstrapper
@@ -75,6 +77,8 @@ class MapperProvider(Provider):
     recommendation_mapper = provide(RecommendationMapper, scope=Scope.REQUEST)
     targeting_mapper = provide(TargetingMapper, scope=Scope.REQUEST)
     dating_profile_mapper = provide(DatingProfileMapper, scope=Scope.REQUEST)
+    chat_mapper = provide(ChatMapper, scope=Scope.REQUEST)
+    message_mapper = provide(MessageMapper, scope=Scope.REQUEST)
     interaction_mapper = provide(InteractionMapper, scope=Scope.REQUEST)
     audit_event_mapper = provide(AuditEventMapper, scope=Scope.REQUEST)
     global_data_mapper = provide(GlobalDataMapper, scope=Scope.REQUEST)
@@ -95,6 +99,7 @@ class DataGatewayProvider(Provider):
         WithParents[DefaultMatchDataGateway],
         WithParents[DefaultBlockedPairsGateway],
         WithParents[DefaultIncomingLikesDataGateway],
+        WithParents[DefaultChatDataGateway],
     )
 
 

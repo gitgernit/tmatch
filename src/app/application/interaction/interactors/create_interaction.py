@@ -3,20 +3,18 @@ from app.application.common.interactor import interactor
 from app.application.common.notifications.service import NotificationService
 from app.application.common.unit_of_work import UnitOfWork
 from app.application.interaction.dto import InteractionResult
-from app.application.interaction.errors import (
-    CandidateNotFoundError,
-    CandidateNotRecommendedError,
-    SelfInteractionError,
-)
+from app.application.interaction.errors import CandidateNotFoundError, SelfInteractionError
 from app.application.match.data_gateway import MatchDataGateway
 from app.application.notification_device.data_gateway import NotificationDeviceDataGateway
 from app.application.recommendation.data_gateway import RecommendationDataGateway
 from app.application.user.data_gateway import UserDataGateway
+from app.application.chat.data_gateway import ChatDataGateway
 from app.domain.audit_event.entity import AuditEvent
 from app.domain.audit_event.value_objects import AuditEventType
 from app.domain.interaction.entity import Interaction
 from app.domain.interaction.value_objects import InteractionType
 from app.domain.user.entity import UserId
+from app.domain.chat.entity import Chat
 
 
 @interactor
@@ -28,6 +26,7 @@ class CreateInteractionInteractor:
     notification_service: NotificationService
     match_data_gateway: MatchDataGateway
     recommendation_data_gateway: RecommendationDataGateway
+    chat_data_gateway: ChatDataGateway
 
     async def execute(
         self,
@@ -42,14 +41,6 @@ class CreateInteractionInteractor:
         candidate = await self.user_data_gateway.load_with_id(candidate_user_id)
         if candidate is None:
             raise CandidateNotFoundError
-        if action in (InteractionType.LIKE, InteractionType.DISLIKE):
-            is_recommended = await self.recommendation_data_gateway.has_recommendation(
-                user_id=user.id,
-                candidate_user_id=candidate_user_id,
-                ml_recommendation_id=ml_recommendation_id,
-            )
-            if not is_recommended:
-                raise CandidateNotRecommendedError
         interaction = Interaction.factory(
             actor_user_id=user.id,
             candidate_user_id=candidate_user_id,
@@ -67,7 +58,7 @@ class CreateInteractionInteractor:
         await self.unit_of_work.add(audit_event)
         await self.unit_of_work.commit()
         if action is InteractionType.LIKE:
-            await self._send_like_notifications(actor_id=user.id, candidate_user_id=candidate_user_id)
+            await self._handle_like(actor_id=user.id, candidate_user_id=candidate_user_id)
         return InteractionResult(
             interaction_id=interaction.id,
             actor_user_id=user.id,
@@ -86,10 +77,24 @@ class CreateInteractionInteractor:
                 body="You have a new like.",
             )
 
+    async def _handle_like(self, actor_id: UserId, candidate_user_id: UserId) -> None:
+        """
+        Handle side-effects of a LIKE interaction:
+        - always send 'new like' notification (if device exists);
+        - if LIKE resulted in an active match: create chat (if needed) and send 'new match' notification.
+        """
+        await self._send_like_notifications(actor_id=actor_id, candidate_user_id=candidate_user_id)
+
         match_user_ids = await self.match_data_gateway.list_active_match_user_ids(actor_id)
         is_match_active = candidate_user_id in match_user_ids
         if not is_match_active:
             return
+
+        existing_chat = await self.chat_data_gateway.load_by_users(actor_id, candidate_user_id)
+        if existing_chat is None:
+            chat = Chat.factory(actor_id, candidate_user_id)
+            await self.unit_of_work.add(chat)
+            await self.unit_of_work.commit()
 
         candidate_match_device = await self.notification_device_data_gateway.load_by_user_id(candidate_user_id)
         if candidate_match_device is not None:

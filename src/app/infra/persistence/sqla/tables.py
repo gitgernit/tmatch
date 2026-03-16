@@ -26,10 +26,12 @@ from app.infra.persistence.sqla.rows import (
     AccessTokenRow,
     AuditEventRow,
     AuthIdentityRow,
+    ChatRow,
     DatingProfilePhotoRow,
     DatingProfileRow,
     DatingProfileTraitRow,
     InteractionRow,
+    MessageRow,
     NotificationDeviceRow,
     ProfileRow,
     RecommendationRow,
@@ -169,6 +171,28 @@ interaction_table: Final = Table(
     Column("deleted_at", DateTime(timezone=True)),
 )
 
+chat_table: Final = Table(
+    "chats",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column("user_a_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("user_b_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("deleted_at", DateTime(timezone=True)),
+    UniqueConstraint("user_a_id", "user_b_id", name="uq_chats_user_pair"),
+)
+
+message_table: Final = Table(
+    "messages",
+    meta_data,
+    Column("id", UUID, primary_key=True),
+    Column("chat_id", UUID, ForeignKey("chats.id", ondelete="CASCADE"), nullable=False),
+    Column("sender_user_id", UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("text", String, nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("deleted_at", DateTime(timezone=True)),
+)
+
 audit_event_table: Final = Table(
     "audit_events",
     meta_data,
@@ -194,3 +218,5 @@ mapper_registry.map_imperatively(DatingProfilePhotoRow, dating_profile_photo_tab
 mapper_registry.map_imperatively(DatingProfileTraitRow, dating_profile_trait_table)
 mapper_registry.map_imperatively(InteractionRow, interaction_table)
 mapper_registry.map_imperatively(AuditEventRow, audit_event_table)
+mapper_registry.map_imperatively(ChatRow, chat_table)
+mapper_registry.map_imperatively(MessageRow, message_table)
