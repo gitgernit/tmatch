@@ -81,8 +81,8 @@ class GetMyIncomingLikesInteractor:
             card = _build_candidate_card(candidate, dp)
 
             rec = await self.recommendation_data_gateway.load_latest_for_pair(
-                user_id=user.id,
-                candidate_user_id=liker_user_id,
+                user_id=liker_user_id,
+                candidate_user_id=user.id,
             )
 
             items.append(
